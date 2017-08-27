@@ -1,0 +1,168 @@
+
+
+$primary-font: 'Lato', sans-serif;
+$secondary-font: 'PT Sans', sans-serif;
+
+$color-black: #000;
+$color-grey-dark: #333;
+$color-grey: #ddd;
+$color-grey-light: #efefef;
+$color-blue: #00f;
+$color-red-trans: hsla(0, 55%, 50%, .5);
+$color-red: hsl(0, 95%, 50%);
+
+@mixin container {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 40em;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+@mixin reset-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  font-family: $primary-font;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 1.4;
+}
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $secondary-font;
+	font-weight: 700;
+	letter-spacing: -1px;
+	line-height: 1.2;
+	margin-bottom: .5em;
+	margin-top: 1em;
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+}
+
+a {
+	color: $color-blue;
+}
+
+p {
+	margin-bottom: 1em;
+	margin-top: 0;
+}
+
+blockquote {
+	border-left: 5px solid $color-red-trans;
+	font-style: italic;
+	margin-left: 0;
+	padding-left: .5em;
+}
+
+code {
+	background-color: $color-grey-light;
+	border: 1px solid $color-grey;
+	border-radius: .15em;
+	color: $color-red;
+	font-size: .65em;
+	padding: .15em;
+
+}
+
+img + em {
+	display: block;
+	font-size: .65em;
+	line-height: 1.2;
+}
+
+.container {
+	@include container;
+}
+
+// HEADER
+.masthead {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 3em;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.site-navigation {
+	margin-bottom: .5em;
+}
+
+.nav-item {
+	color: $color-black;
+	font-family: $secondary-font;
+	margin-right: 1em;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.header-notice {
+	font-family: $primary-font;
+	font-size: 80%;
+	margin-left: auto;
+}
+
+// FOOTER
+
+.footer-heading {
+	margin-bottom: .25em;
+}
+
+.footer-list {
+  @include reset-list;
+  display: flex;
+  justify-content: center;
+
+	&-item {
+    font-size: .75em;
+    padding: 1.25em;
+		text-decoration: none;
+	}
+}
+
+// HOME
+
+.home-header a {
+	color: $color-black;
+	text-decoration: none;
+}
+
+.work-loop {
+	display: flex;
+	margin-bottom: 3em;
+}
+
+.work-item {
+	flex: 1 50%;
+}
+
+// POSTS
+.post-date {
+	font-size: .75em;
+	margin-bottom: 1em;
+}
+
+.post-content {
+	margin-bottom: 5em;
+}
