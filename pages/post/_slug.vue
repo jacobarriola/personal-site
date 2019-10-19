@@ -23,7 +23,14 @@ export default {
 
   head () {
     return {
-      title: this.currentPost.fields.title
+      title: this.currentPost.fields.title,
+      meta: [
+        {
+          hid: `description`,
+          name: `description`,
+          content: this.currentPost.fields.excerpt
+        }
+      ]
     }
   }
 }
