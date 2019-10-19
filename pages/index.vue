@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  async fetch({store, params}) {
+  async fetch ({store, params}) {
     await store.dispatch('posts/getPosts', params.slug)
   },
   computed: {
