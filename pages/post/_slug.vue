@@ -13,14 +13,10 @@ export default {
     if (payload) {
       return { post: payload }
     }
-
-    try {
-      await store.dispatch('posts/getPostBySlug', params.slug)
-
-      return { post: store.state.posts.currentPost }
-    } catch (error) {
-      console.log(Error(error))
-    }
+    
+    await store.dispatch('posts/getPostBySlug', params.slug)
+    
+    return { post: store.state.posts.currentPost }
   },
 
   head () {

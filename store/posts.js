@@ -39,7 +39,7 @@ export const actions = {
       })
       commit('SET_CURRENT_POST', items[0])
     } catch (error) {
-      throw error
+      console.log(Error(error))
     }
   }
 }
