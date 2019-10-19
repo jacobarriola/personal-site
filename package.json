@@ -13,13 +13,12 @@
     "precommit": "npm run lint",
     "heroku-postbuild": "npm run build"
   },
-  "dependencies": {
-    "@nuxtjs/markdownit": "^1.2.7",
-    "contentful": "^7.10.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
+    "@nuxtjs/markdownit": "^1.2.7",
     "babel-eslint": "^7.2.3",
+    "contentful": "^7.10.0",
     "eslint": "^4.3.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-loader": "^1.9.0",
