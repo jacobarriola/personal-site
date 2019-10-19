@@ -1,4 +1,38 @@
+import contentful from './plugins/contentful'
+
 module.exports = {
+
+  buildModules: [
+    '@nuxtjs/dotenv',
+  ],
+
+  modules: [
+    '@nuxtjs/markdownit',
+  ],
+
+  markdownit: {
+    injected: true,
+  },
+
+  generate: {
+    async routes() {
+      try {
+        const { items } = await contentful.getEntries({
+          content_type: 'blogPost',
+        })
+
+        return items.map(entry => {
+          return {
+            route: `/post/${entry.fields.slug}`,
+            payload: entry
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  },
+
   /*
   ** Headers of the page
   */
@@ -37,7 +71,10 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+
+      config.node = {
+        fs: 'empty'
+      }
     },
-    vendor: ['axios']
   }
 }
