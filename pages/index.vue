@@ -10,16 +10,14 @@
 </template>
 
 <script>
-import contentful from '../plugins/contentful'
-
 export default {
-  async asyncData () {
-      const { items } = await contentful.getEntries({
-        content_type: 'blogPost',
-        order: '-sys.createdAt',
-      })
-
-      return {posts: items}
+  async fetch({store, params}) {
+    await store.dispatch('posts/getPosts', params.slug)
+  },
+  computed: {
+    posts() {
+      return this.$store.state.posts.posts
+    }
   },
   head: {
     title: 'Home page'

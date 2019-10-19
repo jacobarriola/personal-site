@@ -12,7 +12,7 @@ module.exports = {
 
   markdownit: {
     injected: true,
-    html: true,
+    html: true, 
   },
 
   generate: {
