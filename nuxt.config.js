@@ -2,8 +2,6 @@ import contentful from './plugins/contentful'
 
 module.exports = {
 
-  mode: 'spa',
-
   buildModules: [
     '@nuxtjs/dotenv',
   ],
