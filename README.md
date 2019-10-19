@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8a5b8ab4-13a1-4531-93b2-10713417052a/deploy-status)](https://app.netlify.com/sites/boring-euler-38d313/deploys)
+
 # jacobarriola
 
 > Nuxt.js project
