@@ -2,17 +2,20 @@ import contentful from './plugins/contentful'
 
 export default {
 
-  plugins: [
-    {
-      src: '@/plugins/contentful',
-      mode: 'client'
-    }
-  ],
-
   buildModules: [
     '@nuxtjs/dotenv',
-    '@nuxtjs/markdownit'
+    '@nuxtjs/markdownit',
+    'nuxt-webfont-loader'
   ],
+
+  webfontloader: {
+    google: {
+      families: [
+        'PT+Sans:700',
+        'Lato:300,700'
+      ]
+    }
+  },
 
   markdownit: {
     injected: true,
@@ -46,11 +49,10 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Jacob Arriola' }
+      { hid: 'description', name: 'description', content: 'Website of Jacob Arriola, full stack web developer' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=PT+Sans:700|Lato:300,700' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
 
