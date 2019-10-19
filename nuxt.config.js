@@ -2,10 +2,13 @@ import contentful from './plugins/contentful'
 
 export default {
 
+  modules: [
+    'nuxt-webfontloader'
+  ],
+
   buildModules: [
     '@nuxtjs/dotenv',
-    '@nuxtjs/markdownit',
-    'nuxt-webfontloader'
+    '@nuxtjs/markdownit'
   ],
 
   webfontloader: {
