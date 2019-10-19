@@ -6,8 +6,6 @@
 </template>
 
 <script>
-import contentful from '~/plugins/contentful'
-
 export default {
   async asyncData ({store, params, payload}) {
     if (payload) {
