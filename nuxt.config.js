@@ -14,8 +14,8 @@ export default {
   webfontloader: {
     google: {
       families: [
-        'PT+Sans:700',
-        'Lato:300,700'
+        'Lato:300,700',
+        'PT+Sans:700'
       ]
     }
   },
