@@ -20,7 +20,7 @@ export default {
     }
   },
   head: {
-    title: 'Home page'
+    title: 'Home'
   }
 }
 </script>
