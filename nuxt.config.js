@@ -1,25 +1,29 @@
 import contentful from './plugins/contentful'
 
-module.exports = {
+export default {
+
+  plugins: [
+    {
+      src: '@/plugins/contentful',
+      mode: 'client'
+    }
+  ],
 
   buildModules: [
     '@nuxtjs/dotenv',
-  ],
-
-  modules: [
-    '@nuxtjs/markdownit',
+    '@nuxtjs/markdownit'
   ],
 
   markdownit: {
     injected: true,
-    html: true, 
+    html: true
   },
 
   generate: {
-    async routes() {
+    async routes () {
       try {
         const { items } = await contentful.getEntries({
-          content_type: 'blogPost',
+          content_type: 'blogPost'
         })
 
         return items.map(entry => {
@@ -49,8 +53,9 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=PT+Sans:700|Lato:300,700' }
     ]
   },
+
   css: [
-    { src: '~/assets/css/main.scss', lang: 'scss' }
+    '~/assets/css/main.scss'
   ],
   /*
   ** Customize the progress-bar color
@@ -76,6 +81,6 @@ module.exports = {
       config.node = {
         fs: 'empty'
       }
-    },
+    }
   }
 }

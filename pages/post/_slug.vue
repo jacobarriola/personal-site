@@ -1,21 +1,23 @@
 <template>
   <article>
-    <h1>{{ currentPost.fields.title }}</h1>
-    <main v-html="$md.render(currentPost.fields.content)"></main>
+    <h1>{{ post.fields.title }}</h1>
+    <main v-html="$md.render(post.fields.content)"></main>
   </article>
 </template>
 
 <script>
-export default {
-  computed: {
-    currentPost() {
-      return this.$store.state.posts.currentPost
-    }
-  },
+import contentful from '~/plugins/contentful'
 
-  async fetch({store, params}) {
+export default {
+  async asyncData ({store, params, payload}) {
+    if (payload) {
+      return { post: payload }
+    }
+
     try {
       await store.dispatch('posts/getPostBySlug', params.slug)
+
+      return { post: store.state.posts.currentPost }
     } catch (error) {
       console.log(Error(error))
     }
@@ -23,12 +25,12 @@ export default {
 
   head () {
     return {
-      title: this.currentPost.fields.title,
+      title: this.post.fields.title,
       meta: [
         {
           hid: `description`,
           name: `description`,
-          content: this.currentPost.fields.excerpt
+          content: this.post.fields.excerpt
         }
       ]
     }
