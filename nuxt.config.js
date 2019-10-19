@@ -5,7 +5,7 @@ export default {
   buildModules: [
     '@nuxtjs/dotenv',
     '@nuxtjs/markdownit',
-    'nuxt-webfont-loader'
+    'nuxt-webfontloader'
   ],
 
   webfontloader: {
