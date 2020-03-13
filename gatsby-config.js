@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   siteMetadata: {
     title: `Jacob Arriola`,
@@ -40,8 +42,8 @@ module.exports = {
     {
       resolve: `gatsby-source-contentful`,
       options: {
-        spaceId: `4pywjkutx049`,
-        accessToken: `94f5d6e83035005045aaa39a7147423d8cd2874d4f12e525d2faca27a027cb9e`,
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
         host: `preview.contentful.com`,
       },
     },
