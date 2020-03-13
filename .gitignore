@@ -1,12 +1,14 @@
-# dependencies
+# Project dependencies
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+.cache
 node_modules
+yarn-error.log
 
-# logs
-npm-debug.log
+# Build directory
+/public
 
-# Nuxt build
-.nuxt
+# macOS
+.DS_Store
 
-# Nuxt generate
-dist
-/.env
+# deployment-specific configs
+now.json
