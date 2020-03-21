@@ -16,11 +16,13 @@ function IndexPage({ data }) {
       <ul>
         {data.allContentfulBlogPost.nodes.map(post => (
           <li className="mb-10" key={post.id}>
-            <h2 className="text-2xl">
+            <h2 className="text-2xl mb-2">
               <Link to={`/post/${post.slug}`}>{post.title}</Link>
             </h2>
-            <time>{post.createdAt}</time>
-            <p>{post.excerpt.excerpt}</p>
+            <time className="mb-2 block text-sm" dateTime={post.createdAt}>
+              {post.createdAtFormatted}
+            </time>
+            <p className="font-serif">{post.excerpt.excerpt}</p>
           </li>
         ))}
       </ul>
@@ -36,7 +38,8 @@ export const query = graphql`
   query {
     allContentfulBlogPost(sort: { fields: createdAt, order: DESC }) {
       nodes {
-        createdAt(formatString: "MMMM DD, YYYY")
+        createdAt
+        createdAtFormatted: createdAt(formatString: "MMMM DD, YYYY")
         excerpt {
           excerpt
         }
