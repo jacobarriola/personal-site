@@ -7,8 +7,9 @@ module.exports = {
     author: `@jacobarriola`,
   },
   plugins: [
-    'gatsby-plugin-eslint',
+    `gatsby-plugin-eslint`,
     `gatsby-plugin-react-helmet`,
+    `gatsby-transformer-remark`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -22,7 +23,7 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-postcss',
+      resolve: `gatsby-plugin-postcss`,
       options: {
         postCssPlugins: [
           require(`tailwindcss`)(`./tailwind.config.js`),

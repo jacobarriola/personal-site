@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { graphql } from 'gatsby'
+import { graphql, Link } from 'gatsby'
 
 import Layout from '../components/layout'
 import SEO from '../components/seo'
@@ -16,7 +16,9 @@ function IndexPage({ data }) {
       <ul>
         {data.allContentfulBlogPost.nodes.map(post => (
           <li className="mb-10" key={post.id}>
-            <h2 className="text-2xl">{post.title}</h2>
+            <h2 className="text-2xl">
+              <Link to={`/post/${post.slug}`}>{post.title}</Link>
+            </h2>
             <time>{post.createdAt}</time>
             <p>{post.excerpt.excerpt}</p>
           </li>
@@ -34,12 +36,13 @@ export const query = graphql`
   query {
     allContentfulBlogPost(sort: { fields: createdAt, order: DESC }) {
       nodes {
-        id
-        title
         createdAt(formatString: "MMMM DD, YYYY")
         excerpt {
           excerpt
         }
+        id
+        slug
+        title
       }
     }
   }
