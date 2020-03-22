@@ -16,7 +16,7 @@ function IndexPage({ data }) {
       <ul>
         {data.allContentfulBlogPost.nodes.map(post => (
           <li className="mb-10" key={post.id}>
-            <h2 className="text-2xl mb-2">
+            <h2 className="text-2xl mb-2 leading-tight">
               <Link to={`/post/${post.slug}`}>{post.title}</Link>
             </h2>
             <time className="mb-2 block text-sm" dateTime={post.createdAt}>
