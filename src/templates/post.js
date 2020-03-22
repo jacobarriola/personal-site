@@ -16,12 +16,9 @@ function PostTemplate(props) {
       <article>
         <header className="mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3 md:mb-6">{post.title}</h1>
-          <div className="flex items-center text-sm">
-            <time dateTime={post.createdAt}>{post.createdAtFormatted}</time>
-            <div aria-label={`Last updated on ${post.updatedAtFormatted}`}>
-              <span className="mx-2">|</span>Last Updated:{' '}
-              <time dateTime={post.updatedAt}>{post.updatedAtFormatted}</time>
-            </div>
+          <div className="text-sm">
+            Last updated on{' '}
+            <time dateTime={post.updatedAt}>{post.updatedAtFormatted}</time>
           </div>
         </header>
         <div
@@ -40,7 +37,6 @@ PostTemplate.propTypes = {
     contentfulBlogPost: PropTypes.object,
   }),
   contentfulBlogPost: PropTypes.shape({
-    createdAt: PropTypes.string,
     updatedAt: PropTypes.string,
     content: PropTypes.object,
     ['content.childMarkdownRemark']: PropTypes.object,
@@ -63,14 +59,12 @@ export const query = graphql`
           html
         }
       }
-      createdAt
-      createdAtFormatted: createdAt(formatString: "MMMM DD, YYYY")
-      updatedAt
-      updatedAtFormatted: updatedAt(formatString: "MMMM DD, YYYY")
       excerpt {
         excerpt
       }
       title
+      updatedAt
+      updatedAtFormatted: updatedAt(formatString: "MMMM DD, YYYY")
     }
   }
 `
