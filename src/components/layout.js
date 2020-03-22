@@ -13,7 +13,10 @@ function Layout({ children }) {
       </main>
 
       <footer className="border-t">
-        <nav className="flex justify-between max-w-3xl mx-auto p-4 md:p-8 text-sm">
+        <nav
+          aria-label="footer nav"
+          className="flex justify-between max-w-3xl mx-auto p-4 md:p-8 text-sm"
+        >
           <p>Jacob Arriola</p>
           <ul className="flex">
             <li className="mr-4">

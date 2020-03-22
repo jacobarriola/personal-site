@@ -19,7 +19,7 @@ function Header() {
           {site.siteMetadata.title}
         </Link>
 
-        <nav className="flex items-center">
+        <nav aria-label="main nav" className="flex items-center">
           {[
             {
               route: `/`,
