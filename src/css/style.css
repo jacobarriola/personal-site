@@ -2,6 +2,7 @@
 @tailwind base;
 @tailwind components;
 /* purgecss end ignore */
+
 @tailwind utilities;
 
 /* purgecss start ignore */
@@ -50,4 +51,5 @@ hr {
     @apply text-2xl;
   }
 }
+
 /* purgecss end ignore */

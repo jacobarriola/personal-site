@@ -27,7 +27,6 @@ module.exports = {
         postCssPlugins: [
           require(`tailwindcss`)(`./tailwind.config.js`),
           require(`autoprefixer`),
-          require(`cssnano`),
         ],
       },
     },
@@ -36,6 +35,7 @@ module.exports = {
       options: {
         tailwind: true,
         purgeOnly: [`src/css/style.css`],
+        printRejected: true,
       },
     },
     `gatsby-plugin-offline`,
