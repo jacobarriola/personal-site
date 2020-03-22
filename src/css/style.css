@@ -1,0 +1,53 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-bold font-inter leading-none;
+}
+
+a {
+  text-decoration: underline;
+}
+
+/* purgecss start ignore */
+hr {
+  @apply mb-6;
+}
+
+.post-content p {
+  @apply mb-6;
+}
+
+.post-content h2 {
+  @apply mb-8 pt-8 text-2xl;
+}
+
+.post-content h3,
+.post-content h4 {
+  @apply pt-3 mb-6;
+}
+
+.post-content h3 {
+  @apply text-xl;
+}
+
+.post-content a {
+  @apply font-bold;
+}
+
+@screen md {
+  .post-content h2 {
+    @apply text-3xl;
+  }
+
+  .post-content h3 {
+    @apply text-2xl;
+  }
+}
+/* purgecss end ignore */
