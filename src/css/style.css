@@ -4,6 +4,7 @@
 /* purgecss end ignore */
 @tailwind utilities;
 
+/* purgecss start ignore */
 h1,
 h2,
 h3,
@@ -15,7 +16,6 @@ a {
   text-decoration: underline;
 }
 
-/* purgecss start ignore */
 hr {
   @apply mb-6;
 }
