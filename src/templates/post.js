@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 
 import Layout from '../components/layout'
 import SEO from '../components/seo'
+import AboutMe from '../components/about'
 
 function PostTemplate(props) {
   const {
@@ -13,9 +14,9 @@ function PostTemplate(props) {
   return (
     <Layout>
       <SEO title={post.title} description={post.excerpt.excerpt} />
-      <article>
+      <main>
         <header className="mb-6 md:mt-6 md:mb-12">
-          <h1 className="text-3xl md:text-5xl mb-3 md:mb-6">{post.title}</h1>
+          <h1 className="text-3xl md:text-5xl mb-3">{post.title}</h1>
           <div className="text-sm">
             Last updated on{' '}
             <time dateTime={post.updatedAt}>{post.updatedAtFormatted}</time>
@@ -27,7 +28,10 @@ function PostTemplate(props) {
             __html: post.content.childMarkdownRemark.html,
           }}
         ></div>
-      </article>
+      </main>
+      <aside>
+        <AboutMe className="my-10 md:my-20" />
+      </aside>
     </Layout>
   )
 }

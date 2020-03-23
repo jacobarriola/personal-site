@@ -4,28 +4,39 @@ import { graphql, Link } from 'gatsby'
 
 import Layout from '../components/layout'
 import SEO from '../components/seo'
+import AboutMe from '../components/about'
 
 function IndexPage({ data }) {
   return (
     <Layout>
       <SEO
-        keywords={[`gatsby`, `tailwind`, `react`, `tailwindcss`]}
+        keywords={[
+          `gatsby`,
+          `tailwind`,
+          `react`,
+          `tailwindcss`,
+          `Jacob Arriola`,
+        ]}
         title="Home"
       />
-
-      <ul>
-        {data.allContentfulBlogPost.nodes.map(post => (
-          <li className="mb-10" key={post.id}>
-            <h2 className="text-2xl mb-2">
-              <Link to={`/post/${post.slug}`}>{post.title}</Link>
-            </h2>
-            <time className="mb-2 block text-sm" dateTime={post.createdAt}>
-              {post.createdAtFormatted}
-            </time>
-            <p className="font-serif">{post.excerpt.excerpt}</p>
-          </li>
-        ))}
-      </ul>
+      <aside>
+        <AboutMe className="mb-10 md:mb-20" path="/" />
+      </aside>
+      <main>
+        <ul>
+          {data.allContentfulBlogPost.nodes.map(post => (
+            <li className="mb-10" key={post.id}>
+              <h2 className="text-2xl mb-2">
+                <Link to={`/post/${post.slug}`}>{post.title}</Link>
+              </h2>
+              <time className="mb-2 block text-sm" dateTime={post.createdAt}>
+                {post.createdAtFormatted}
+              </time>
+              <p className="font-serif">{post.excerpt.excerpt}</p>
+            </li>
+          ))}
+        </ul>
+      </main>
     </Layout>
   )
 }

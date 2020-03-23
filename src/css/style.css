@@ -31,7 +31,7 @@ hr {
 
 .post-content h3,
 .post-content h4 {
-  @apply pt-3 mb-6;
+  @apply pt-6 mb-6;
 }
 
 .post-content h3 {
@@ -40,6 +40,11 @@ hr {
 
 .post-content a {
   @apply font-bold;
+}
+
+.post-content ul {
+  @apply ml-4 mb-6;
+  list-style-type: disc;
 }
 
 @screen md {
