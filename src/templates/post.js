@@ -1,5 +1,5 @@
 import React from 'react'
-import { graphql } from 'gatsby'
+import { graphql, Link } from 'gatsby'
 import PropTypes from 'prop-types'
 
 import Layout from '../components/layout'
@@ -8,6 +8,7 @@ import AboutMe from '../components/about'
 
 function PostTemplate(props) {
   const {
+    pageContext: { next, previous },
     data: { contentfulBlogPost: post },
   } = props
 
@@ -31,12 +32,45 @@ function PostTemplate(props) {
       </main>
       <aside>
         <AboutMe className="my-10 md:my-20" />
+        <nav
+          aria-label="post-navigation"
+          className="flex justify-between text-sm"
+        >
+          {previous && (
+            <Link
+              aria-label={previous.title}
+              className="pr-2"
+              to={`/post/${previous.slug}`}
+            >
+              &larr; {previous.title}
+            </Link>
+          )}
+          {next && (
+            <Link
+              aria-label={next.title}
+              className="text-right pl-2 ml-auto"
+              to={`/post/${next.slug}`}
+            >
+              {next.title} &rarr;
+            </Link>
+          )}
+        </nav>
       </aside>
     </Layout>
   )
 }
 
 PostTemplate.propTypes = {
+  pageContext: PropTypes.shape({
+    next: PropTypes.shape({
+      slug: PropTypes.string,
+      title: PropTypes.string,
+    }),
+    previous: PropTypes.shape({
+      slug: PropTypes.string,
+      title: PropTypes.string,
+    }),
+  }),
   data: PropTypes.shape({
     contentfulBlogPost: PropTypes.object,
   }),
