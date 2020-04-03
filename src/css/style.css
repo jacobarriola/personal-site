@@ -47,6 +47,24 @@ hr {
   list-style-type: disc;
 }
 
+.gatsby-highlight {
+  @apply mb-6 shadow;
+}
+
+pre {
+  @apply rounded text-sm;
+}
+
+pre[class*='language-'] {
+  @apply leading-loose;
+}
+
+.line-numbers .line-numbers-rows {
+  @apply pl-3;
+  border-right: none;
+  top: 14px;
+}
+
 @screen md {
   .post-content h2 {
     @apply text-3xl;
@@ -54,6 +72,10 @@ hr {
 
   .post-content h3 {
     @apply text-2xl;
+  }
+
+  .gatsby-highlight {
+    @apply -mx-20;
   }
 }
 

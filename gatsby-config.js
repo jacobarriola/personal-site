@@ -57,5 +57,18 @@ module.exports = {
         host: `preview.contentful.com`,
       },
     },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              showLineNumbers: true,
+            },
+          },
+        ],
+      },
+    },
   ],
 }
