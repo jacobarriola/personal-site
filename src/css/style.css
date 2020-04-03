@@ -57,7 +57,7 @@ blockquote {
 }
 
 .gatsby-highlight {
-  @apply mb-10 shadow;
+  @apply mb-6 shadow;
 }
 
 pre {
