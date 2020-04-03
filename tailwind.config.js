@@ -1,8 +1,10 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
 module.exports = {
   theme: {
-    fontFamily: {
-      inter: [`Inter`, `sans-serif`],
-      serif: [`Georgia`, `Cambria`, `Times New Roman`, `Times`, `serif`],
+    extend: {
+      fontFamily: {
+        sans: [`Inter`, ...fontFamily.sans],
+      },
     },
   },
   variants: {},
