@@ -16,3 +16,11 @@ exports.onRouteUpdate = ({ prevLocation }) => {
 
   skipLink.focus()
 }
+
+exports.onServiceWorkerUpdateReady = ({ serviceWorker }) => {
+  console(`service worker ready`, serviceWorker)
+}
+
+exports.onServiceWorkerUpdateFound = ({ serviceWorker }) => {
+  console(`service worker found`, serviceWorker)
+}
