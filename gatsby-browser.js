@@ -17,8 +17,14 @@ exports.onRouteUpdate = ({ prevLocation }) => {
   skipLink.focus()
 }
 
-exports.onServiceWorkerUpdateReady = ({ serviceWorker }) => {
-  console.log(`service worker ready`, serviceWorker)
+exports.onServiceWorkerUpdateReady = () => {
+  const answer = window.confirm(
+    `This application has been updated. ` +
+      `Reload to display the latest version?`
+  )
+  if (answer === true) {
+    window.location.reload()
+  }
 }
 
 exports.onServiceWorkerUpdateFound = ({ serviceWorker }) => {
