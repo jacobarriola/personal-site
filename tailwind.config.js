@@ -1,4 +1,5 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
+
 module.exports = {
   theme: {
     extend: {
@@ -7,6 +8,8 @@ module.exports = {
       },
     },
   },
+
   variants: {},
+
   plugins: [require('@tailwindcss/custom-forms')],
 }
