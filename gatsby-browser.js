@@ -18,9 +18,9 @@ exports.onRouteUpdate = ({ prevLocation }) => {
 }
 
 exports.onServiceWorkerUpdateReady = ({ serviceWorker }) => {
-  console(`service worker ready`, serviceWorker)
+  console.log(`service worker ready`, serviceWorker)
 }
 
 exports.onServiceWorkerUpdateFound = ({ serviceWorker }) => {
-  console(`service worker found`, serviceWorker)
+  console.log(`service worker found`, serviceWorker)
 }
