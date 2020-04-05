@@ -19,56 +19,78 @@ function SEO({ description, lang, meta, keywords, title }) {
   const metaDescription = description || site.siteMetadata.description
 
   return (
-    <Helmet
-      htmlAttributes={{
-        lang,
-      }}
-      meta={[
-        {
-          name: `description`,
-          content: metaDescription,
-        },
-        {
-          property: `og:title`,
-          content: title,
-        },
-        {
-          property: `og:description`,
-          content: metaDescription,
-        },
-        {
-          property: `og:type`,
-          content: `website`,
-        },
-        {
-          name: `twitter:card`,
-          content: `summary`,
-        },
-        {
-          name: `twitter:creator`,
-          content: site.siteMetadata.author,
-        },
-        {
-          name: `twitter:title`,
-          content: title,
-        },
-        {
-          name: `twitter:description`,
-          content: metaDescription,
-        },
-      ]
-        .concat(
-          keywords.length > 0
-            ? {
-                name: `keywords`,
-                content: keywords.join(`, `),
-              }
-            : []
-        )
-        .concat(meta)}
-      title={title}
-      titleTemplate={`%s | ${site.siteMetadata.title}`}
-    />
+    <>
+      <Helmet
+        htmlAttributes={{
+          lang,
+        }}
+        meta={[
+          {
+            name: `description`,
+            content: metaDescription,
+          },
+          {
+            property: `og:title`,
+            content: title,
+          },
+          {
+            property: `og:description`,
+            content: metaDescription,
+          },
+          {
+            property: `og:type`,
+            content: `website`,
+          },
+          {
+            property: `og:image`,
+            content: `https://unavatar.now.sh/github/jacobarriola/`,
+          },
+          {
+            property: `og:image:width`,
+            content: `400`,
+          },
+          {
+            property: `og:image:height`,
+            content: `400`,
+          },
+          {
+            property: `og:site_name`,
+            content: site.siteMetadata.title,
+          },
+          {
+            property: `og:locale`,
+            content: `en_US`,
+          },
+          {
+            name: `twitter:card`,
+            content: `summary`,
+          },
+          {
+            name: `twitter:creator`,
+            content: site.siteMetadata.author,
+          },
+          {
+            name: `twitter:title`,
+            content: title,
+          },
+          {
+            name: `twitter:description`,
+            content: metaDescription,
+          },
+        ]
+          .concat(
+            keywords.length > 0
+              ? {
+                  name: `keywords`,
+                  content: keywords.join(`, `),
+                }
+              : []
+          )
+          .concat(meta)}
+        title={title}
+        titleTemplate={`%s | ${site.siteMetadata.title}`}
+      />
+    </>
   )
 }
 
