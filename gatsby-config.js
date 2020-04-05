@@ -7,6 +7,7 @@ module.exports = {
     description: `Website of Jacob Arriola, full stack web developer`,
     author: `@jacobarriola`,
     twitter: `https://twitter.com/jacobarriola/`,
+    siteUrl: `https://jacobarriola.com`,
   },
   plugins: [
     `gatsby-plugin-eslint`,
@@ -69,6 +70,33 @@ module.exports = {
             },
           },
         ],
+      },
+    },
+    {
+      resolve: `gatsby-plugin-advanced-sitemap`,
+      options: {
+        query: `
+          {
+            allContentfulBlogPost {
+              edges {
+                node {
+                  id
+                  contentful_id
+                  slug
+                  createdAt
+                  updatedAt
+                }
+              }
+            }
+          }
+        `,
+        mapping: {
+          allContentfulBlogPost: {
+            sitemap: `posts`,
+          },
+        },
+        exclude: [`/404`],
+        createLinkInHead: true,
       },
     },
   ],
