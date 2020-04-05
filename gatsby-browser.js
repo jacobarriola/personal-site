@@ -19,12 +19,12 @@ exports.onRouteUpdate = ({ prevLocation }) => {
 }
 
 /**
- * Alert visitors that new data is avail
+ * Alert visitors that new data is avail since data comes from a service worker
  */
 exports.onServiceWorkerUpdateReady = () => {
   const answer = window.confirm(
-    `This application has been updated. ` +
-      `Reload to display the latest version?`
+    `Hey! There's some new data since you last visited.` +
+      `Reload the page to display the latest version?`
   )
 
   if (answer === true) {
