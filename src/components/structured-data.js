@@ -19,6 +19,7 @@ const StructuredData = ({
           description
           author
           twitter
+          siteUrl
         }
       }
     }
@@ -41,7 +42,7 @@ const StructuredData = ({
     '@type': 'Person',
     name: 'Jacob Arriola',
     sameAs: [
-      `https://jacobarriola.com/`,
+      site.siteMetadata.siteUrl,
       site.siteMetadata.twitter,
       `https://github.com/jacobarriola/`,
       `https://www.linkedin.com/in/jacobarriola/`,
@@ -53,7 +54,7 @@ const StructuredData = ({
     ...context,
     '@type': 'Website',
     name: site.siteMetadata.title,
-    url: `https://jacobarriola.com`,
+    url: site.siteMetadata.siteUrl,
     publisher: {
       ...person,
     },
@@ -62,7 +63,7 @@ const StructuredData = ({
   const webPage = {
     ...context,
     '@type': 'WebPage',
-    url: `https://jacobarriola.com/${url}`,
+    url: `${site.siteMetadata.siteUrl}/${url}`,
     inLanguage: `en-US`,
     isPartOf: {
       ...webSite,
