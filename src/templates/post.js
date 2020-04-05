@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
+import StructuredData from '../components/structured-data'
 
 function PostTemplate(props) {
   const {
@@ -15,6 +16,14 @@ function PostTemplate(props) {
   return (
     <Layout>
       <SEO title={post.title} description={post.excerpt.excerpt} />
+      <StructuredData
+        description={post.excerpt.excerpt}
+        datePublished={post.createdAt}
+        dateModified={post.updatedAt}
+        headline={post.title}
+        pageType="blogPost"
+        url={`post/${post.slug}`}
+      />
       <main>
         <header className="mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{post.title}</h1>
@@ -101,6 +110,8 @@ export const query = graphql`
         excerpt
       }
       title
+      slug
+      createdAt
       updatedAt
       updatedAtFormatted: updatedAt(formatString: "MMMM DD, YYYY")
     }

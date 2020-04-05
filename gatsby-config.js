@@ -6,6 +6,7 @@ module.exports = {
     title: `Jacob Arriola`,
     description: `Website of Jacob Arriola, full stack web developer`,
     author: `@jacobarriola`,
+    twitter: `https://twitter.com/jacobarriola/`,
   },
   plugins: [
     `gatsby-plugin-eslint`,

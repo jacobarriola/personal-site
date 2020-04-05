@@ -5,6 +5,7 @@ import { graphql, Link } from 'gatsby'
 import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
+import StructuredData from '../components/structured-data'
 
 function IndexPage({ data }) {
   return (
@@ -19,6 +20,7 @@ function IndexPage({ data }) {
         ]}
         title="Home"
       />
+      <StructuredData pageType="webPage" />
       <aside>
         <AboutMe className="mb-10 md:mb-20" path="/" />
       </aside>
