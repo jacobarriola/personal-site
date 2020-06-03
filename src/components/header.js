@@ -25,9 +25,13 @@ function Header() {
               route: `/`,
               title: `Home`,
             },
+            {
+              route: `/about`,
+              title: `About`,
+            },
           ].map(link => (
             <Link
-              className="inline-block  md:ml-6"
+              className="inline-block ml-6"
               key={link.title}
               to={link.route}
             >
