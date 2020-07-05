@@ -33,9 +33,18 @@ blockquote {
   @apply mb-8 pt-8 text-2xl;
 }
 
+.post-content h2 .anchor.before {
+  @apply pt-8;
+}
+
 .post-content h3,
 .post-content h4 {
   @apply pt-6 mb-6;
+}
+
+.post-content h3 .anchor.before,
+.post-content h4 .anchor.before {
+  @apply pt-6;
 }
 
 .post-content h3 {
@@ -91,6 +100,16 @@ li > code[class*='language-'] {
   .gatsby-highlight {
     @apply -mx-20;
   }
+}
+
+a:not([href^='#']):not([href^='/']):after {
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='currentColor'%3E%3Cpath d='M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z'%3E%3C/path%3E%3Cpolygon points='45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9'%3E%3C/polygon%3E%3C/svg%3E");
+  display: inline-block;
+  height: 0.875em;
+  margin-left: 2px;
+  vertical-align: middle;
+  width: 0.8125em;
 }
 
 /* purgecss end ignore */

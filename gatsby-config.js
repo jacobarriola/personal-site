@@ -57,10 +57,15 @@ module.exports = {
             options: {},
           },
           {
-            resolve: `gatsby-remark-prismjs`,
+            resolve: `gatsby-remark-external-links`,
             options: {
-              showLineNumbers: true,
+              target: `_self`,
+              rel: `nofollow noopener noreferrer`,
             },
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {},
           },
         ],
       },
