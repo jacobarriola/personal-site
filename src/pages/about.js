@@ -19,18 +19,17 @@ function PageAbout() {
         <p>
           I&apos;m a full stack developer at{' '}
           <a href="https://zeek.com">Zeek Interactive</a> in charge of bringing
-          designs to life on a web browser and mobile device. I&apos;m
-          passionate about the web, and am always learning new technologies or
-          improving how to write code.
+          designs to life. I&apos;m passionate about the web, and am always
+          learning new technologies or improving how to write code.
         </p>
         <p>
           These days, I spend most of my time writing JavaScript and some PHP to
-          construct websites and web applications.
+          construct web sites and web applications.
         </p>
         <p>
-          The web is fascinating web because of its ability to communicate and
-          bring ideas to life across the world. It&apos;s is a channel that
-          helps with the manifestation of ideas.
+          The web is fascinating because of its ability to communicate and bring
+          ideas to life across the world. It&apos;s is a channel that helps with
+          the manifestation of ideas.
         </p>
         <p>
           Outside of work, I&apos;m really passionate about cycling, backyard
@@ -44,7 +43,7 @@ function PageAbout() {
           >
             Twitter
           </a>
-          !
+          .
         </p>
       </main>
     </Layout>
