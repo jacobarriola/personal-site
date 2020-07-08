@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 function AboutMe({ className, path }) {
   const { file } = useStaticQuery(graphql`
     query {
-      file(relativePath: { eq: "avatar.jpeg" }) {
+      file(relativePath: { eq: "avatar-2020.JPG" }) {
         childImageSharp {
           fixed(width: 55, height: 55, quality: 100) {
             ...GatsbyImageSharpFixed_withWebp_tracedSVG
