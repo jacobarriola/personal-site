@@ -1,0 +1,191 @@
+---
+title: Add Product Bundles to Your WooCommerce GraphQL API
+createdAt: 2020-07-04
+updatedAt: 2020-07-05
+slug: woocommerce-graphql-product-bundles
+tags: graphql
+excerpt: How to extend the WooCommerce GraphQL API to include the Product Bundles add-on via WPGraphQL WPGraphQL WooCommerce (WooGraphQL)
+---
+
+## Introduction
+
+This tutorial is to show you how to add the [WooCommerce Product Bundle](https://woocommerce.com/products/product-bundles/ 'WooCommerce Product Bundle add on documentation') product type to your WooCommerce GraphQL API. This is definitely a work-in-progress that I'll try and keep updated.
+
+The two plugins in use here are:
+
+1. [WPGraphQL](https://github.com/wp-graphql/wp-graphql 'WPGraphQL Github repository'): 0.10.2
+2. [WPGraphQL WooCommerce (WooGraphQL)](https://github.com/wp-graphql/wp-graphql-woocommerce 'WPGraphQL WooCommerce Github repository'): 0.5.1
+
+### Begin with the end in mind
+
+Ideally, this is the shape of the GraphQL query that we're shooting for:
+
+```graphql
+query {
+  products {
+    name
+    shortDescription
+    ... on BundleProduct {
+      price
+      bundledItems {
+        node {
+          name
+          shortDescription
+        }
+      }
+    }
+  }
+}
+```
+
+### TLDR - the final code
+
+Check out the gist for the full implementation: https://gist.github.com/jacobarriola/5d055ba102c001f0c556427a1ae78cd2
+
+### Here are the high level steps that I intend to take:
+
+1. Register the `BundleProduct` ObjectType
+2. Register a `RootQuery` field for the new ObjectType
+3. Expose the new `BundleProduct` object type to WooCommerce GraphQL's list of product types
+4. Expose the new `BundleProduct` to the product types enum values so that query input filters will work
+5. Add fields to the `BundleProduct` ObjectType
+6. Create a Connection to expose bundleItems to `BundleProduct`
+
+## Product is a GraphQL Interface
+
+An important WooCommerce GraphQL architectural concept to grasp is that a `Product` is an Interface type and all `product_types` (simple, variable, external, grouped) are _implementations_ of the `Product` Interface.
+
+> 📕 Say what?! Check out the GraphQL docs on what an Interface is: https://graphql.org/learn/schema/#interfaces
+
+In normal WooCommerce-land, `product_types` (simple, variable, external, grouped) are simply terms for the `product_type` custom taxonomy. The Product Bundle add-on extends this same pattern by creating a term `bundle` for the `product_type` taxonomy.
+
+Therefore, in order to add product bundles to our GraphQL API, we're going to follow the same implementation pattern that the core product types already follow in WooGraphQL and implement and `Product` interface.
+
+## Step one: add the bundle product type to GraphQL product types
+
+This filter allows us to safely add our `bundle` product type. The underlying method uses this list to expose the WooCommerce product types (simple, variable, external, grouped) to the GraphQL schema.
+
+```php
+add_filter( 'graphql_woocommerce_product_types', function ( $product_types ) {
+	$product_types['bundle'] = 'BundleProduct';
+
+	return $product_types;
+} );
+```
+
+## Step two: add the `BundleProduct` ObjectType to the GraphQL TypeRegistry
+
+This is the meat of our customization. We're bascially declaring our new Type along with all of the fields.
+
+```php{numberLines: true}
+
+add_action( 'graphql_register_types', function () {
+
+	/**
+   * Register BundleProduct ObjectType
+   */
+	register_graphql_object_type( 'BundleProduct', [
+			'description' => 'A product bundle object',
+			'interfaces'  => [ 'Node', 'Product' ], // Following same pattern that other product types declare
+			'fields'      =>
+				[
+					'bundlePriceMin' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_bundle_price('min');
+						}
+					],
+					'bundlePriceMax' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_bundle_price('max');
+						}
+					],
+					'groupMode'=> [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_group_mode();
+						}
+					],
+					'price' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_price();
+						},
+					],
+					'salePrice' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_sale_price();
+						},
+					],
+					'regularPrice' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_regular_price();
+						},
+					],
+					'bundledItems' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return 'this is still a work-in-progress';
+						},
+					],
+				],
+		]
+	);
+} );
+```
+
+### Why are product bundle methods available?
+
+By default, the first parameter in a field resolver is always the latest thing that was queried. In our case, we are querying `Product` types because of the `Product` interface; therefore, the `$source` parameter is an instance of the `WPGraphQL\WooCommerce\Model\Product` class.
+
+But if you explore the class, you won't find any of the Product Bundle methods I'm using (ie `get_bundle_price()`). But why isn't PHP throwing any fatal `cannot find get_bundle_price() method in ...` errors? This is because the presence of a `__call()` [magic PHP method](https://www.php.net/manual/en/language.oop5.magic.php 'Documentation on magic methods') in the _parent_ class (`WPGraphQL\WooCommerce\Model\Crud_CPT`), which allows us to call dynamic or inaccessible methods that are not definded in the class.
+
+## Step three: register a GraphQL field with our new Type
+
+The Type will not appear on our GraphQL API until we register at least one field. For now, I'm registering a `RootQuery` so that consumer can query `bundleProduct` directly like the other product types.
+
+```php
+add_action( 'graphql_register_types', function () {
+
+  register_graphql_field(
+      'RootQuery',
+      'bundleProduct',
+      [
+        'type' => TYPE_BUNDLE_PRODUCT,
+      ]
+  );
+});
+
+```
+
+## Step four: add bundle to the product types enum
+
+Doing so will include our new `BundleProduct` to be included in the `where` argument when querying products.
+
+```php
+
+add_filter( 'graphql_product_types_enum_values', function ( $values ) {
+	$values['BUNDLE'] = [
+		'value'       => 'bundle',
+		'description' => 'A bundle product',
+	];
+
+	return $values;
+} );
+
+```
+
+## Step five (TBD): create a new Connection in order to return bundle items
+
+In my query, I'd like to be able to return the actual items that are part of the product bundle. In WooCommerce-land, these are known as `bundleItems`. This is still a work-in-progress.
+
+## Conclusion
+
+Still more work here, but hopefully this will get you started. There's still plenty to be done, such as:
+
+1. add bundle items
+2. add bundle to the cart
+3. more that I haven't thought of 🤷🏽‍♂️
