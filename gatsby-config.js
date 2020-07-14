@@ -23,6 +23,38 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `posts`,
+        path: `${__dirname}/src/posts`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        defaultLayouts: {
+          default: require.resolve(`./src/components/layout.js`),
+        },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: `gatsby-remark-autolink-headers`,
+            options: {},
+          },
+          {
+            resolve: `gatsby-remark-external-links`,
+            options: {
+              target: `_self`,
+              rel: `nofollow noopener noreferrer`,
+            },
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {},
+          },
+        ],
+      },
+    },
+    {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Jacob Arriola`,
@@ -40,13 +72,6 @@ module.exports = {
       },
     },
     `gatsby-plugin-offline`,
-    {
-      resolve: `gatsby-source-contentful`,
-      options: {
-        spaceId: process.env.CONTENTFUL_SPACE_ID,
-        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-      },
-    },
     {
       resolve: `gatsby-transformer-remark`,
       options: {
@@ -74,21 +99,22 @@ module.exports = {
       options: {
         query: `
           {
-            allContentfulBlogPost {
+            allMdx {
               edges {
                 node {
                   id
-                  contentful_id
-                  slug
-                  createdAt
-                  updatedAt
+                  frontmatter {
+                    slug
+                    createdAt
+                    updatedAt
+                  }
                 }
               }
             }
           }
         `,
         mapping: {
-          allContentfulBlogPost: {
+          allMdx: {
             sitemap: `posts`,
           },
         },
