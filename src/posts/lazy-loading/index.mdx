@@ -1,0 +1,68 @@
+---
+title: Lazy Loading Images on Hover
+createdAt: 2017-08-22
+updatedAt: 2020-04-04
+slug: lazy-loading
+tags: performance
+excerpt: There are a lot of opinions on lazy loading images. Here's a use-case for one scenario that worked out nicely for me.
+---
+
+The other day I was handed a design for a large navigation menu with images. An image would show when a user hovered over the individual menu item - a pretty common navigation UI.
+
+My biggest concern was how to load these images only when the
+visitor required them, especially because they are not visible to the user
+unless she engages with the navigation, which may not happen all the time.
+
+## The plan
+
+**The problem** - the navigation contains a large amount of images, which may impact site load time.
+
+**The solution** - only load a navigation image when user hovers over the associated menu item.
+
+**The technique** - on hover, replace a `span` tag with an `img` tag and copy the attributes over.
+
+## The markup
+
+I've created a `span` element with a custom attribute named `data-original`, which contains the path to my image.
+
+```html
+<div class="container">
+  <h1 class="trigger">Hover over me to fetch an image</h1>
+  <span data-original="http://www.fillmurray.com/200/200">
+</div>
+```
+
+## The JavaScript
+
+I have an event listener for the `.trigger` class that will do a quick search and replace, copying what I have in the `data-original` to the `src`.
+
+## CodePen demo
+
+I have a red box that is the `span` tag. Once you hover over the box, the JS fires and loads the image.
+
+<p
+  data-height="268"
+  data-theme-id="21239"
+  data-slug-hash="dGGzxK"
+  data-default-tab="result"
+  data-user="jacobarriola"
+  class="codepen"
+>
+  See the Pen{' '}
+  <a href="http://codepen.io/jacobarriola/pen/dGGzxK/">
+    Lazy Load on hover using span swap
+  </a>{' '}
+  by Jacob Arriola (<a href="http://codepen.io/jacobarriola">@jacobarriola</a>)
+  on <a href="http://codepen.io">CodePen</a>.
+</p>
+<script defer src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+## Progressive Enhancement
+
+Well, the image contains other meta data that I didn't include here such as
+the post title and excerpt. Therefore, in the event that JavaScript is not
+available, the user will still be able to tell what she is looking at and can still click through - yay!
+
+## What About SEO?
+
+From what I understand, we shouldn't get penalized since the DOM intially reads as a `span` tag. I was orginally going to use an `img` tag and just swap out attributes, but was concerned about search engines penalizing me for having an `img` tag without a `src` attribute.
