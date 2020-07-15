@@ -31,7 +31,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       path: `/post/${slug}`,
       component: path.resolve(`./src/templates/post.js`),
       context: {
-        // Pass some data to the template
         id,
         slug,
       },
