@@ -27,7 +27,7 @@ function IndexPage({ data }) {
       <main>
         <ul>
           {data.allMdx &&
-            data.allMdx.nodes.map((node) => (
+            data.allMdx.nodes.map(node => (
               <li className="mb-10" key={node.id}>
                 <h2 className="text-2xl mb-2">
                   <Link to={`/post/${node.frontmatter.slug}`}>
@@ -38,7 +38,7 @@ function IndexPage({ data }) {
                   className="mb-2 block text-sm"
                   dateTime={node.frontmatter.createdAt}
                 >
-                  {node.frontmatter.createdAt}
+                  {node.frontmatter.createdAtFormatted}
                 </time>
                 <p className="font-serif">{node.frontmatter.excerpt}</p>
               </li>
@@ -62,7 +62,8 @@ export const query = graphql`
           excerpt
           title
           slug
-          updatedAt(formatString: "MM/DD/YYYY")
+          createdAtFormatted: createdAt(formatString: "MMMM Do YYYY")
+          createdAt(formatString: "YYYY-MM-DD")
         }
       }
     }

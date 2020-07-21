@@ -15,7 +15,14 @@ const shortcodes = { Link } // Provide common components here
 function PostTemplate({ data }) {
   const {
     mdx: {
-      frontmatter: { title, excerpt, createdAt, updatedAt, slug },
+      frontmatter: {
+        title,
+        excerpt,
+        createdAt,
+        updatedAt,
+        updatedAtFormatted,
+        slug,
+      },
       body,
     },
   } = data
@@ -35,7 +42,8 @@ function PostTemplate({ data }) {
         <header className="mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
           <div className="text-sm">
-            Last updated on <time dateTime={updatedAt}>{updatedAt}</time>
+            Last updated on{' '}
+            <time dateTime={updatedAt}>{updatedAtFormatted}</time>
           </div>
         </header>
 
@@ -69,7 +77,7 @@ PostTemplate.propTypes = {
 }
 
 export const query = graphql`
-  query BlogPostQuery($id: String!) {
+  query BLOG_POST_QUERY($id: String!) {
     mdx(id: { eq: $id }) {
       id
       body
@@ -78,7 +86,8 @@ export const query = graphql`
         excerpt
         slug
         title
-        updatedAt(formatString: "MMMM Do YYYY")
+        updatedAtFormatted: updatedAt(formatString: "MMMM Do YYYY")
+        updatedAt(formatString: "YYYY-MM-DD")
       }
     }
   }
