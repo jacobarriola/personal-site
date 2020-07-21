@@ -55,7 +55,7 @@ blockquote {
   @apply text-blue-700;
 }
 
-.post-content ul {
+.post-content ul:not(.list-none) {
   @apply ml-4 mb-6;
   list-style-type: disc;
 }
