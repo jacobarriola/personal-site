@@ -94,33 +94,5 @@ module.exports = {
         ],
       },
     },
-    {
-      resolve: `gatsby-plugin-advanced-sitemap`,
-      options: {
-        query: `
-          {
-            allMdx {
-              edges {
-                node {
-                  id
-                  frontmatter {
-                    slug
-                    createdAt
-                    updatedAt
-                  }
-                }
-              }
-            }
-          }
-        `,
-        mapping: {
-          allMdx: {
-            sitemap: `posts`,
-          },
-        },
-        exclude: [`/404`],
-        createLinkInHead: true,
-      },
-    },
   ],
 }
