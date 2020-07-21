@@ -23,6 +23,7 @@ function PostTemplate({ data }) {
         updatedAtFormatted,
         slug,
       },
+      timeToRead,
       body,
     },
   } = data
@@ -41,9 +42,13 @@ function PostTemplate({ data }) {
       <main>
         <header className="mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
-          <div className="text-sm">
-            Last updated on{' '}
-            <time dateTime={updatedAt}>{updatedAtFormatted}</time>
+          <div className="flex text-sm">
+            <div>
+              Last updated on{' '}
+              <time dateTime={updatedAt}>{updatedAtFormatted}</time>
+            </div>
+            <span className="mx-1">{' • '}</span>
+            <div>{timeToRead} min read</div>
           </div>
         </header>
 
@@ -80,6 +85,7 @@ export const query = graphql`
   query BLOG_POST_QUERY($id: String!) {
     mdx(id: { eq: $id }) {
       id
+      timeToRead
       body
       frontmatter {
         createdAt(formatString: "MMMM Do YYYY")

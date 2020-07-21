@@ -34,12 +34,13 @@ function IndexPage({ data }) {
                     {node.frontmatter.title}
                   </Link>
                 </h2>
-                <time
-                  className="mb-2 block text-sm"
-                  dateTime={node.frontmatter.createdAt}
-                >
-                  {node.frontmatter.createdAtFormatted}
-                </time>
+                <div className="mb-2 flex text-sm">
+                  <time dateTime={node.frontmatter.createdAt}>
+                    {node.frontmatter.createdAtFormatted}
+                  </time>
+                  <span className="mx-1">{' • '}</span>
+                  <div>{node.timeToRead} min read</div>
+                </div>
                 <p className="font-serif">{node.frontmatter.excerpt}</p>
               </li>
             ))}
@@ -58,6 +59,7 @@ export const query = graphql`
     allMdx(sort: { fields: frontmatter___createdAt, order: DESC }) {
       nodes {
         id
+        timeToRead
         frontmatter {
           excerpt
           title

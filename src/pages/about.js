@@ -7,7 +7,7 @@ import StructuredData from '../components/structured-data'
 function PageAbout() {
   return (
     <Layout>
-      <SEO title="About" />
+      <SEO title="👋🏽 About" />
       <StructuredData pageType="webPage" />
       <main className="post-content md:text-xl">
         <h1
