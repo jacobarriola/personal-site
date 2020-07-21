@@ -1,0 +1,168 @@
+---
+title: Moving from WordPress to a Static Site Generator
+createdAt: 2019-04-04
+updatedAt: 2020-07-40
+slug: wordpress-static-site-generator
+tags: WordPress
+excerpt: I am a WordPress developer and decided to move my personal site away from a self-hosted WordPress site to a static-site generator. This post discusses why I did it and what other WordPress developers should consider if thinking about making the switch.
+---
+
+> Hey! This post is a bit outdated. My site has morphed a few times since this was published. It's currently on Gatsby with Contentful 🚀
+
+---
+
+I have nothing against WordPress; it's wonderful software that solves a lot business problems. In fact, I develop a lot of applications/sites using WordPress. The problem is, for my site, WordPress was no longer a viable solution to my needs.
+
+A static-site generator is a build system that takes in source files and creates all of the HTML for your site. For an in-depth explanation about static-site generators, David Walsh has a great [introduction to static-site generators](https://davidwalsh.name/introduction-static-site-generators 'Intro Article About Static Site Generators') on his site. There are a lot of
+generators out there such as Jekyll, Metalsmith, and Harp, to name a few.
+
+The focus of this article is to discuss why I decided to move my site from
+WordPress to a static-site generator, from the viewpoint of a WordPress developer.
+
+## Why I switched from WordPress to a static site generator
+
+### 1. Databases
+
+I don't write a lot of articles and don't want to have to manage databases,
+especially dealing with crazy security threats that I wouldn't know how to
+manage/triage if they should occur. Plus, dealing with managing a local db versus a production db was too much to deal with. I'd rather spend the time learning new tools.
+
+### 2. Plugin updates
+
+I ran some core plugins in my old WordPress site. While these plugins do an
+amazing job of what they were designed to do, ultimately, I didn't have enough time to keep pace with updating for bug-fixes, security patches and new features.
+
+There would be so many times that I would log into my site and see all kinds of plugin updates. Being a safe developer, I would have to update locally, test, then push up my updated plugin folder onto my repo - too many steps that I was willing to deal with anymore.
+
+WordPress core updates aren't that big of a concern for me lately. Most hosting platforms do a good job of updating core for you automatically. Plus, the core team has been pushing out updates pretty frequently to make the update process less impactful.
+
+### 3. Performance
+
+Static sites are fast. There aren't any SQL queries or PHP processing, or
+WordPress creation when a visitor hits your site. The HTML has already been created during the build process.
+
+### 4. Security
+
+Since there isn't anything to login to or a connected database, I don't have to worry as much for any security threats, especially when it comes to things such as comment spamming and site hacking. There were a bunch of times I'd log in to my WordPress site and see hundreds of comments from weird IP addresses. That kind of stuff made me really nervous.
+
+### 5. JavaScript
+
+I wanted a something where I could use JavaScript as part of my build/site creation process (more on this in another post). Most of my time with WordPress dealt with PHP, which is fine; however, I don't have a ton of interest in diving deeper into PHP, and would rather spend time improving my JavaScript.
+
+### 6. No Web Hosting + Deployment with Gulp
+
+I'm hosting my new site via Github Pages, which - for now - is free. So there's no need for me to pay for hosting, although the cost for hosting these days is pretty cheap anyways; nonetheless, who doesn't like free things?!
+
+There's a sweet little Gulp plugin called [gulp-gh-pages](https://www.npmjs.com/package/gulp-gh-pages) that I use to deploy my site on GitHub Pages. I was already using git to deploy my WordPress site anyway; however, this is a nice convenient touch.
+
+Here's the basic setup on my `gulpfile.js`:
+
+```javascript
+var gulp = require('gulp')
+var ghPages = require('gulp-gh-pages')
+
+gulp.task('deploy', function () {
+  return gulp.src('./build/**/*').pipe(ghPages())
+})
+```
+
+And here's how I deploy:
+
+```bash
+$ gulp deploy
+[19:37:21] Using gulpfile ~/Documents/Websites/personal-site/gulpfile.js
+[19:37:21] Starting 'deploy'...
+[19:37:21] [gh-pages] Cloning repo
+[19:37:21] [gh-pages] Checkout branch `gh-pages`
+[19:37:21] [gh-pages] Updating repository
+[19:37:23] [gh-pages] Copying files to repository
+[19:37:23] [gh-pages] Adding 4 files.
+[19:37:23] [gh-pages] Committing "Update 2016-01-15T03:37:21.748Z"
+[19:37:23] [gh-pages] Pushing to remote.
+[19:37:25] Finished 'deploy' after 3.39 s
+```
+
+Basically, what's happening here is:
+
+1. Gulp clones my `master` branch and checks it out in a new branch named `gh-pages`
+2. Gulp makes a commit to `gh-pages` with a timestamp as its message
+3. Gulp pushes `gh-pages` to the `origin` repo (on GitHub)
+
+## Road Blocks to Address
+
+For all of the issues I listed with WordPress, there were some possible deal breakers when it came to jumping ship. The following are things I ran into and that a WordPress developer needs to consider before making the change:
+
+### 1. How to deal with SEO
+
+Most SEO WordPress plugins do a lot of stuff that you need to be prepared
+to do on your own. You'll have to figure out:
+
+1. How to integrate social (especially things such as Facebook open graph and
+   custom attributes)
+2. How to create your own sitemaps
+3. Custom meta tags such as title and description at the post level
+
+My solution? I don't overthink SEO. Write good content/build awesome solutions and people will find you. I've spent too much time going back and forth with SEO experts and reading countless posts about best practices. Spending too much time optimizing your site for SEO is like chasing a moving target. Search engines are always changing how they rank and find you.
+
+### 2. Importing data from WordPress
+
+Luckily, I didn't have any comments on my old site and just a handful of posts, so I didn't have to deal with importing data. However, if you have a lot of data with multiple post types, and custom fields, moving over to a static site generator may not be the ideal option.
+
+One possible project may be to hit the [WP REST API](http://v2.wp-api.org/ 'WordPress REST API Docs')and bring in your data via JSON. Once you have the JSON, you can theoretically have your static-site generator fire up the static HTML pages. One road block would be figuring out authentication, but I'm sure there are solutions out there.
+
+Another possible solution is finding a static-site generator that plays nice with WordPress imports. For instance, Jekyll is a popular ruby-based solution that [has an out-of-the-box](http://import.jekyllrb.com/docs/wordpress/ 'Jekyll WordPress Import Documentation') WordPress importer.
+
+### 3. No administration UI
+
+For the most part, I was OK with having to deal with the WordPress admin UI, especially since I use [WP-CLI](http://wp-cli.org/), which allows me to use the command line for managing my WordPress site such as plugins, users, and
+media.
+
+However, one thing you'll need to keep an eye on is the post/page admin screen.
+
+A static-site generator doesn't have an admin UI, so if you need an interface to manage your posts/pages, that's something you want to consider as a deciding factor. The biggest thing in the management perspective is search. As I write more posts, I feel that searching for a specific post will be harder than using WordPress.
+
+### 4. No WYSIWYG for writing posts/pages
+
+Similar to not having the administration UI, you will lose the content UI where authors write posts. Most static-site generators use markdown as the interface to write your posts. The build process of the generator converts the markdown files into HTML.
+
+### 5. You'll need to learn a templating language
+
+A powerful part of static-sites is the template engines powering your source code.
+
+This introduces programmatic concepts into your HTML such as loops and objects.
+
+I've started off with [Handlebars](http://handlebarsjs.com 'Handlebars JavaScript Scripting Language') without any major road blocks. I've also heard good things about [Nunjucks](http://mozilla.github.io/nunjucks 'Nunjucks Templating Language') and will probably try them out later on.
+
+If you're a WordPress developer, picking up a templating language shouldn't be too cumbersome, since many of concepts overlap. Either way, it's still a new thing you'll have to learn.
+
+Let's look at a quick example of how a basic WordPress loop differs from Handlebars:
+
+```php
+// Our trusty WordPress loop
+<ul>
+  <?php while ( have_posts() ) : the_post(); ?>
+    <li>
+      <h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+      <p><?php the_date(); ?></p>
+      <?php the_excerpt(); ?>
+    </li>
+  <?php endwhile;?>
+</ul>
+```
+
+```handlebars
+// The same loop, written in Handlebars
+<ul>
+  {{#each collections.posts}}
+    <li>
+      <h2><a href="{{this.path}}">{{this.title}}</a></h2>
+      <p>{{this.date}}</p>
+      <p>{{{this.excerpt}}}</p>
+    </li>
+  {{/each}}
+</ul>
+```
+
+For the most part, the programmatic concepts are parallel. Each is looking for an object of posts and uses a loop to iterate through them, returning values along the way (title, date, excerpt). Beyond the syntax, it's quite similar and doable for a WordPress developer to take on.
+
+One significant difference is while WordPress uses built-in functions to return values (`the_title()` returns the post title, for instance), Handlebars uses JavaScript's dot notation, `{{ this.title }}`.

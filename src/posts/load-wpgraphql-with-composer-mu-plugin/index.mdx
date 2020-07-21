@@ -1,0 +1,121 @@
+---
+title: Add WPGraphQL as an mu-plugin with composer
+createdAt: 2020-04-02
+updatedAt: 2020-07-13
+slug: load-wpgraphql-with-composer-mu-plugin
+tags: graphql
+excerpt: How to load WPGraphQL via mu-plugins wih composer.
+---
+
+While the docs say to [add WPGraphQL to your WordPress plugin directory](https://docs.wpgraphql.com/getting-started/install-and-activate/#github---download--clone-plugin 'WPGraphQL documentation page') (`wp-content/plugins`), here's a quick config if you want to add it to your mu-plugins instead.
+
+This configuration assumes your composer file sits in `wp-content`.
+
+## Why mu-plugins (must-use)?
+
+I like to add core logic in mu-plugins because:
+
+- no one can ever accidentally disable your logic, thereby causing unexpected errors
+- all custom app logic is neatly organized in a central place as opposed to mixed in with 3rd party libraries or within a theme
+- the code always loads; no need to activate anything
+
+Check out the full WordPress.org docs on mu-plugins: https://wordpress.org/support/article/must-use-plugins/
+
+## tldr - the final composer json config
+
+Here's the final `composer.json` file that you'll want to use.
+
+```json
+{
+  "name": "wpgrapql",
+  "type": "project",
+  "license": "proprietary",
+  "config": {
+    "preferred-install": "dist",
+    "vendor-dir": "mu-plugins/app/vendor"
+  },
+  "extra": {
+    "installer-paths": {
+      "mu-plugins/{$name}/": [
+        "type:wordpress-muplugin",
+        "wp-graphql/wp-graphql",
+        "wp-graphql/wp-graphiql"
+      ]
+    }
+  },
+  "repositories": [
+    {
+      "type": "github",
+      "url": "https://github.com/wp-graphql/wp-graphql"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/wp-graphql/wp-graphiql"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "composer/installers": "^1.5",
+    "wp-graphql/wp-graphql": "^0.8.0",
+    "wp-graphql/wp-graphiql": "^1.0"
+  }
+}
+```
+
+## Let's break down this composer file step-by-step.
+
+### Add the Github repositories in the repositories array
+
+In your `composer.json` file, add the WPGraphQL GitHub repos to the `repositories` array. This tells composer to pull its data from GitHub, as opposed to packagist. Sometimes there's a slight delay on when a version is available in packagist.
+
+```json
+ "repositories": [
+    {
+      "type": "github",
+      "url": "https://github.com/wp-graphql/wp-graphql"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/wp-graphql/wp-graphiql"
+    }
+  ]
+
+```
+
+### Provide the install path
+
+This tells composer _where_ to install the packages.
+
+```json
+"extra": {
+    "installer-paths": {
+      "mu-plugins/{$name}/": [
+        "type:wordpress-muplugin",
+        "wp-graphql/wp-graphql",
+        "wp-graphql/wp-graphiql"
+      ]
+    }
+  },
+```
+
+### Install via composer
+
+Now that all of the settings are in place, you can go ahead an run the composer install commands.
+
+```shell
+composer require wp-graphql/wp-graphql
+composer require wp-graphql/wp-graphiql
+```
+
+### Load the files
+
+I usually have a `mu-plugins/load.php` file that simply fires off some requires.
+
+```php
+// wp-content/mu-plugins/load.php
+
+require_once __DIR__ . '/wp-graphql/wp-graphql.php';
+require_once __DIR__ . '/wp-graphiql/wp-graphiql.php';
+```
+
+WPGraphQL should now load on your site as expected!

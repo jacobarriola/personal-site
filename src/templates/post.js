@@ -1,119 +1,94 @@
 import React from 'react'
 import { graphql, Link } from 'gatsby'
 import PropTypes from 'prop-types'
+import { MDXProvider } from '@mdx-js/react'
+import { MDXRenderer } from 'gatsby-plugin-mdx'
 
+// Internal dependencies
 import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
 
-function PostTemplate(props) {
+const shortcodes = { Link } // Provide common components here
+
+function PostTemplate({ data }) {
   const {
-    pageContext: { next, previous },
-    data: { contentfulBlogPost: post },
-  } = props
+    mdx: {
+      frontmatter: {
+        title,
+        excerpt,
+        createdAt,
+        updatedAt,
+        updatedAtFormatted,
+        slug,
+      },
+      body,
+    },
+  } = data
 
   return (
     <Layout>
-      <SEO title={post.title} description={post.excerpt.excerpt} />
+      <SEO title={title} description={excerpt} />
       <StructuredData
-        description={post.excerpt.excerpt}
-        datePublished={post.createdAt}
-        dateModified={post.updatedAt}
-        headline={post.title}
+        description={excerpt}
+        datePublished={createdAt}
+        dateModified={updatedAt}
+        headline={title}
         pageType="blogPost"
-        url={`post/${post.slug}`}
+        url={`post/${slug}`}
       />
       <main>
         <header className="mb-6 md:mt-6 md:mb-12">
-          <h1 className="text-3xl md:text-5xl mb-3">{post.title}</h1>
+          <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
           <div className="text-sm">
             Last updated on{' '}
-            <time dateTime={post.updatedAt}>{post.updatedAtFormatted}</time>
+            <time dateTime={updatedAt}>{updatedAtFormatted}</time>
           </div>
         </header>
-        <div
-          className="post-content md:text-lg lg:text-xl font-serif"
-          dangerouslySetInnerHTML={{
-            __html: post.content.childMarkdownRemark.html,
-          }}
-        ></div>
+
+        <div className="post-content md:text-lg lg:text-xl font-serif">
+          <MDXProvider components={shortcodes}>
+            <MDXRenderer>{body}</MDXRenderer>
+          </MDXProvider>
+        </div>
       </main>
       <aside>
         <AboutMe className="my-10 md:my-20" />
-        <nav
-          aria-label="post-navigation"
-          className="flex justify-between text-sm"
-        >
-          {previous && (
-            <Link
-              aria-label={previous.title}
-              className="pr-2"
-              to={`/post/${previous.slug}`}
-            >
-              &larr; {previous.title}
-            </Link>
-          )}
-          {next && (
-            <Link
-              aria-label={next.title}
-              className="text-right pl-2 ml-auto"
-              to={`/post/${next.slug}`}
-            >
-              {next.title} &rarr;
-            </Link>
-          )}
-        </nav>
       </aside>
     </Layout>
   )
 }
 
 PostTemplate.propTypes = {
-  pageContext: PropTypes.shape({
-    next: PropTypes.shape({
-      slug: PropTypes.string,
-      title: PropTypes.string,
-    }),
-    previous: PropTypes.shape({
-      slug: PropTypes.string,
-      title: PropTypes.string,
-    }),
-  }),
   data: PropTypes.shape({
-    contentfulBlogPost: PropTypes.object,
+    mdx: PropTypes.object,
   }),
-  contentfulBlogPost: PropTypes.shape({
-    updatedAt: PropTypes.string,
-    content: PropTypes.object,
-    ['content.childMarkdownRemark']: PropTypes.object,
-    excerpt: PropTypes.object,
-    title: PropTypes.string,
-  }),
-  childMarkdownRemark: PropTypes.shape({
-    html: PropTypes.string,
-  }),
-  excerpt: PropTypes.shape({
-    excerpt: PropTypes.string,
+  mdx: PropTypes.shape({
+    frontmatter: PropTypes.shape({
+      slug: PropTypes.string,
+      createdAt: PropTypes.string,
+      updatedAt: PropTypes.string,
+      excerpt: PropTypes.object,
+      title: PropTypes.string,
+    }),
+    body: PropTypes.string,
   }),
 }
 
 export const query = graphql`
-  query Post($contentful_id: String!) {
-    contentfulBlogPost(contentful_id: { eq: $contentful_id }) {
-      content {
-        childMarkdownRemark {
-          html
-        }
-      }
-      excerpt {
+  query BLOG_POST_QUERY($id: String!) {
+    mdx(id: { eq: $id }) {
+      id
+      body
+      frontmatter {
+        createdAt(formatString: "MMMM Do YYYY")
         excerpt
+        slug
+        title
+        updatedAtFormatted: updatedAt(formatString: "MMMM Do YYYY")
+        updatedAt(formatString: "YYYY-MM-DD")
       }
-      title
-      slug
-      createdAt
-      updatedAt
-      updatedAtFormatted: updatedAt(formatString: "MMMM DD, YYYY")
     }
   }
 `

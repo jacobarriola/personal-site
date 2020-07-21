@@ -1,42 +1,39 @@
 const path = require(`path`)
 
-exports.createPages = async ({ graphql, actions }) => {
+exports.createPages = async ({ graphql, actions, reporter }) => {
   const request = await graphql(`
     {
-      allContentfulBlogPost {
+      allMdx {
         edges {
           node {
-            contentful_id
-            slug
-          }
-          next {
-            slug
-            title
-          }
-          previous {
-            slug
-            title
+            id
+            frontmatter {
+              slug
+            }
           }
         }
       }
     }
   `)
 
-  // Create a page for each node retreived from Contentful
-  request.data.allContentfulBlogPost.edges.forEach(
-    ({ node, next, previous }) => {
-      const { contentful_id, slug } = node
+  if (request.errors) {
+    reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
+  }
 
-      actions.createPage({
-        path: `/post/${slug}`,
-        component: path.resolve(`./src/templates/post.js`),
-        context: {
-          // Pass some data to the template
-          contentful_id,
-          next,
-          previous,
-        },
-      })
-    }
-  )
+  // Create a page for each node retreived
+  request.data.allMdx.edges.forEach(({ node }) => {
+    const {
+      id,
+      frontmatter: { slug },
+    } = node
+
+    actions.createPage({
+      path: `/post/${slug}`,
+      component: path.resolve(`./src/templates/post.js`),
+      context: {
+        id,
+        slug,
+      },
+    })
+  })
 }

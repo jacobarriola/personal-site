@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { graphql, Link } from 'gatsby'
+import { Link, graphql } from 'gatsby'
 
 import Layout from '../components/layout'
 import SEO from '../components/seo'
@@ -26,17 +26,23 @@ function IndexPage({ data }) {
       </aside>
       <main>
         <ul>
-          {data.allContentfulBlogPost.nodes.map(post => (
-            <li className="mb-10" key={post.id}>
-              <h2 className="text-2xl mb-2">
-                <Link to={`/post/${post.slug}`}>{post.title}</Link>
-              </h2>
-              <time className="mb-2 block text-sm" dateTime={post.createdAt}>
-                {post.createdAtFormatted}
-              </time>
-              <p className="font-serif">{post.excerpt.excerpt}</p>
-            </li>
-          ))}
+          {data.allMdx &&
+            data.allMdx.nodes.map(node => (
+              <li className="mb-10" key={node.id}>
+                <h2 className="text-2xl mb-2">
+                  <Link to={`/post/${node.frontmatter.slug}`}>
+                    {node.frontmatter.title}
+                  </Link>
+                </h2>
+                <time
+                  className="mb-2 block text-sm"
+                  dateTime={node.frontmatter.createdAt}
+                >
+                  {node.frontmatter.createdAtFormatted}
+                </time>
+                <p className="font-serif">{node.frontmatter.excerpt}</p>
+              </li>
+            ))}
         </ul>
       </main>
     </Layout>
@@ -48,17 +54,17 @@ IndexPage.propTypes = {
 }
 
 export const query = graphql`
-  query {
-    allContentfulBlogPost(sort: { fields: createdAt, order: DESC }) {
+  query HOME_LATEST_POSTS {
+    allMdx(sort: { fields: frontmatter___createdAt, order: DESC }) {
       nodes {
-        createdAt
-        createdAtFormatted: createdAt(formatString: "MMMM DD, YYYY")
-        excerpt {
-          excerpt
-        }
         id
-        slug
-        title
+        frontmatter {
+          excerpt
+          title
+          slug
+          createdAtFormatted: createdAt(formatString: "MMMM Do YYYY")
+          createdAt(formatString: "YYYY-MM-DD")
+        }
       }
     }
   }
