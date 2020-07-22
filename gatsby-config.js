@@ -10,6 +10,7 @@ module.exports = {
     siteUrl: `https://jacobarriola.com`,
   },
   plugins: [
+    `gatsby-plugin-catch-links`,
     `gatsby-plugin-eslint`,
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-remark`,

@@ -9,6 +9,7 @@ import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
+import { useTimeToReadFormatter } from '../hooks'
 
 const shortcodes = { Link } // Provide common components here
 
@@ -39,7 +40,7 @@ function PostTemplate({ data }) {
         pageType="blogPost"
         url={`post/${slug}`}
       />
-      <main>
+      <main className="relative">
         <header className="mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
           <div className="flex text-sm">
@@ -48,7 +49,7 @@ function PostTemplate({ data }) {
               <time dateTime={updatedAt}>{updatedAtFormatted}</time>
             </div>
             <span className="mx-1">{' • '}</span>
-            <div>{timeToRead} min read</div>
+            <div>{useTimeToReadFormatter(timeToRead)}</div>
           </div>
         </header>
 
@@ -57,6 +58,13 @@ function PostTemplate({ data }) {
             <MDXRenderer>{body}</MDXRenderer>
           </MDXProvider>
         </div>
+        <aside className="fixed top-0 left-0">
+          <ul>
+            {/* {tableOfContents.map(item => {
+              return <li key={item.url}>{item.title}</li>
+            })} */}
+          </ul>
+        </aside>
       </main>
       <aside>
         <AboutMe className="my-10 md:my-20" />
@@ -85,6 +93,7 @@ export const query = graphql`
   query BLOG_POST_QUERY($id: String!) {
     mdx(id: { eq: $id }) {
       id
+      tableOfContents
       timeToRead
       body
       frontmatter {

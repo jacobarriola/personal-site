@@ -6,6 +6,7 @@ import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
+import { useTimeToReadFormatter } from '../hooks'
 
 function IndexPage({ data }) {
   return (
@@ -39,7 +40,7 @@ function IndexPage({ data }) {
                     {node.frontmatter.createdAtFormatted}
                   </time>
                   <span className="mx-1">{' • '}</span>
-                  <div>{node.timeToRead} min read</div>
+                  <div>{useTimeToReadFormatter(node.timeToRead)}</div>
                 </div>
                 <p className="font-serif">{node.frontmatter.excerpt}</p>
               </li>
