@@ -24,13 +24,14 @@ function PostTemplate({ data }) {
         updatedAtFormatted,
         slug,
       },
+      tableOfContents,
       timeToRead,
       body,
     },
   } = data
 
   return (
-    <Layout>
+    <Layout pageType="post">
       <SEO title={title} description={excerpt} />
       <StructuredData
         description={excerpt}
@@ -40,34 +41,53 @@ function PostTemplate({ data }) {
         pageType="blogPost"
         url={`post/${slug}`}
       />
-      <main className="relative">
-        <header className="mb-6 md:mt-6 md:mb-12">
+      <main className="">
+        <header className="max-w-3xl mx-auto mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
-          <div className="flex text-sm">
-            <div>
+          <div className="flex flex-col lg:flex-row text-sm">
+            <div className="mb-2 lg:mb-0">
               Last updated on{' '}
               <time dateTime={updatedAt}>{updatedAtFormatted}</time>
             </div>
-            <span className="mx-1">{' • '}</span>
+            <span className="mx-1 hidden lg:inline-block">{' • '}</span>
             <div>{useTimeToReadFormatter(timeToRead)}</div>
           </div>
         </header>
 
-        <div className="post-content md:text-lg lg:text-xl font-serif">
-          <MDXProvider components={shortcodes}>
-            <MDXRenderer>{body}</MDXRenderer>
-          </MDXProvider>
+        <div
+          className="lg:grid items-start lg:-mx-4"
+          style={{
+            gridTemplateColumns: `calc(50vw - 24rem) repeat(8, 1fr) calc(50vw - 24rem)`,
+          }}
+        >
+          <div className="lg:sticky top-0 col-start-10 text-sm bg-gray-100 lg:ml-8 p-4">
+            <div className="uppercase font-semibold pt-2 mb-2">
+              📕 Table of contents
+            </div>
+            <ul>
+              {tableOfContents &&
+                tableOfContents.items.map(item => {
+                  return (
+                    <li key={item.url}>
+                      <a href={item.url} className="inline-block py-1">
+                        {item.title}
+                      </a>
+                    </li>
+                  )
+                })}
+            </ul>
+          </div>
+          <div className="col-start-2 col-end-10 row-start-1 post-content md:text-lg lg:text-xl font-serif min-w-0">
+            <MDXProvider components={shortcodes}>
+              <MDXRenderer>{body}</MDXRenderer>
+            </MDXProvider>
+          </div>
         </div>
-        <aside className="fixed top-0 left-0">
-          <ul>
-            {/* {tableOfContents.map(item => {
-              return <li key={item.url}>{item.title}</li>
-            })} */}
-          </ul>
-        </aside>
       </main>
       <aside>
-        <AboutMe className="my-10 md:my-20" />
+        <div className="max-w-3xl mx-auto">
+          <AboutMe className="my-10 md:my-20" />
+        </div>
       </aside>
     </Layout>
   )

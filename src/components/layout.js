@@ -9,13 +9,17 @@ import '@reach/skip-nav/styles.css'
 import Header from './header'
 import Footer from './footer'
 
-function Layout({ children }) {
+function Layout({ children, pageType }) {
   return (
     <div className="flex flex-col font-sans min-h-screen text-gray-900">
       <SkipNavLink />
       <Header />
       <SkipNavContent />
-      <div className="flex flex-col flex-1 md:justify-center max-w-3xl mx-auto px-4 py-8 md:p-8 w-full">
+      <div
+        className={`${
+          `default` === pageType ? `max-w-3xl mx-auto ` : ``
+        }flex flex-col flex-1 md:justify-center px-4 py-8 w-full`}
+      >
         {children}
       </div>
       <Footer />
@@ -23,8 +27,13 @@ function Layout({ children }) {
   )
 }
 
+Layout.defaultProps = {
+  pageType: `default`,
+}
+
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  pageType: PropTypes.oneOf([`default`, `post`]),
 }
 
 export default Layout

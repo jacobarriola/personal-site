@@ -96,10 +96,6 @@ li > code[class*='language-'] {
   .post-content h3 {
     @apply text-2xl;
   }
-
-  .gatsby-highlight {
-    @apply -mx-20;
-  }
 }
 
 a:not([href^='#']):not([href^='/']):after {

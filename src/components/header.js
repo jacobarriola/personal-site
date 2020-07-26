@@ -14,7 +14,7 @@ function Header() {
 
   return (
     <header className="border-b">
-      <div className="flex flex-wrap items-center justify-between max-w-3xl mx-auto p-4 md:p-8">
+      <div className="flex flex-wrap items-center justify-between max-w-3xl mx-auto p-4 lg:py-8">
         <Link className="font-bold text-xl tracking-tight no-underline" to="/">
           {site.siteMetadata.title}
         </Link>
