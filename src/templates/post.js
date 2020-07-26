@@ -60,7 +60,7 @@ function PostTemplate({ data }) {
             gridTemplateColumns: `calc(50vw - 24rem) repeat(8, 1fr) calc(50vw - 24rem)`,
           }}
         >
-          <div className="lg:sticky top-0 col-start-10 text-sm bg-gray-100 lg:ml-8 p-4">
+          <div className="lg:sticky top-0 col-start-10 text-sm bg-gray-100 lg:ml-8 p-4 mb-6">
             <div className="uppercase font-semibold pt-2 mb-2">
               📕 Table of contents
             </div>
