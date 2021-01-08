@@ -69,6 +69,10 @@ blockquote {
   @apply mb-6 shadow;
 }
 
+.gatsby-highlight-code-line {
+  @apply block bg-gray-800 border-l-4;
+}
+
 pre {
   @apply rounded text-sm;
 }

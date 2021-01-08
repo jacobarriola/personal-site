@@ -1,0 +1,317 @@
+---
+title: Headless WooCommerce checkout with Stripe
+createdAt: 2021-01-02
+tags:
+  - graphql
+  - stripe
+  - ecommerce
+  - woocommerce
+  - gatsby
+slug: headless-woocommerce-stripe-checkout-graphql
+excerpt: Learn how to create a checkout page for your headless WooCommerce app with Stripe.
+---
+
+## Introduction
+
+This is an intro on how to set up a checkout page with your headless WooCommerce app with Stripe and GraphQL. It's a basic demo that should provide you some tools to get you started.
+
+I'll be using Gatsby as my headless client, but a lot of the logic should work with other libraries/frameworks too.
+
+On the client side, we'll use the [Stripe React library](https://stripe.com/docs/stripe-js/react), which will abstract a lot of the Stripe logic for us.
+
+## Versions
+
+- Gatsby: 2.29
+- WordPress: 3.6
+- WPGraphQL: 1.05
+- WooGraphQL: 0.7.0
+- Apollo: ^3.x
+
+## Prerequisites
+
+1. Create a free account with Stripe and [get your test API public key](https://stripe.com/docs/keys#obtain-api-keys).
+
+2. Install the React Stripe.js library in your Gatsby project
+
+```bash
+npm install --save @stripe/react-stripe-js @stripe/stripe-js
+```
+
+3. Install the free [WooCommerce Gateway Stripe plugin](https://github.com/woocommerce/woocommerce-gateway-stripe) in your WordPress site
+
+## Step 1: Create checkout page and load Stripe
+
+Create a checkout page, load Stripe and wrap your page in the `Elements` provider.
+
+```tsx
+// src/pages/checkout.tsx
+
+import React from 'react'
+import { PageProps } from 'gatsby'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+
+const stripePromise = loadStripe(
+  'pk_test_12345...' // <- Get this from your Stripe account
+)
+
+const Checkout: React.FC<PageProps> = () => {
+  return (
+    <>
+      <h1>Checkout</h1>
+      <Elements stripe={stripePromise}></Elements>
+    </>
+  )
+}
+
+export default Checkout
+```
+
+As an aside, you could always wrap your entire app in this provider. I'd lean to loading it in the checkout page so that we only load Stripe when we need it 🚀.
+
+This is the setup that Stripe needs to load all of its dependencies. On the next step, we'll create our checkout form to build out the necessary credit card fields that a user will fill out.
+
+## Step 3: Create the checkout form
+
+Let's create a basic checkout form so that we can enter our credit card information. For simplicity, we'll hard-code the other information about the buyer such as the name and address.
+
+```tsx
+// src/components/CheckoutForm.tsx
+
+import React from 'react'
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Source } from '@stripe/stripe-js'
+import { gql, useMutation } from '@apollo/client'
+import { navigate } from 'gatsby'
+
+const CheckoutForm: React.FC = () => {
+  // This loads up the Stripe object
+  const stripe = useStripe()
+
+  // Used to pass the payment info to the Stripe API
+  const elements = useElements()
+
+  // We'll deal with this in a sec
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* CardElement will load up the necessary CC fields */}
+      <CardElement
+        options={{
+          hidePostalCode: true, // We'll be sending up the postal ourselves
+        }}
+      />
+      <button disabled={!stripe}>Pay</button>
+    </form>
+  )
+}
+
+export default CheckoutForm
+```
+
+Lots of stuff happening here, but this is then skeleton of our form. We'll load up two elements from Stripe and use the `CardElement` component to render out the credit card fields.
+
+## Step 4: Form submission
+
+When the form is submitted, we will be utilizing the Stripe API to generate a `Source` object. Essentially, the `Source` object contains all of the payment information that a user has submitted. It contains an ID, which will serve as a reference we'll be sending to WooCommerce. WooCommerce will then use that ID during the order and payment process logic.
+
+Our responsibility on the client side is simply to capture the credit card information and send it to Stripe. We'll eventually be sending WooCommerce that same `Source` ID
+
+The meat of our `handleStripe` function is in the `createSource` method that's available from the `stripe` object. We'll either return the `Source` type or an `Error`.
+
+```tsx
+async function handleSubmit(event: React.FormEvent) {
+  event.preventDefault()
+  // highlight-start
+  try {
+    const source = await handleStripe()
+  } catch (error) {
+    console.error(error)
+  }
+  // highlight-end
+}
+
+async function handleStripe(): Promise<Source | Error> {
+  // Guard against stripe or elements not being available
+  if (!stripe || !elements) {
+    throw Error(`stripe or elements undefined`)
+  }
+
+  // Extract the payment data from our <CardElement/> component
+  const cardElements = elements.getElement(CardElement)
+
+  // Guard against an undefined value
+  if (!cardElements) {
+    throw Error(`cardElements not found`)
+  }
+
+  // Create the Source object
+  const { source, error: sourceError } = await stripe.createSource(
+    cardElements,
+    {
+      type: `card`,
+    }
+  )
+
+  // Guard against and error or undefined source
+  if (sourceError || !source) {
+    throw Error(sourceError?.message || `Unknown error generating source`)
+  }
+
+  return source
+}
+```
+
+## Step 5: Send GraphQL mutation to WooCommerce
+
+Once we've handled the Stripe side of things, the last step to complete the checkout is to send a `checkout` mutation to WooCommerce. In the mutation arguments, we'll pass in our newly-created source ID and let WooCommerce know that we intend to use Stripe.
+
+```tsx
+import React from 'react'
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Source } from '@stripe/stripe-js'
+// highlight-next-line
+import { gql, useMutation } from '@apollo/client'
+import { navigate } from 'gatsby'
+
+const CheckoutForm: React.FC = () => {
+  const stripe = useStripe()
+  const elements = useElements()
+
+  // highlight-next-line
+  const [checkout] = useMutation(CHECKOUT)
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    try {
+      const source = await handleStripe()
+
+      // highlight-start
+      await checkout({
+        variables: {
+          input: {
+            clientMutationId: '12345',
+            paymentMethod: 'stripe', // <-- Hey WooCommerce, we'll be using Stripe
+            shippingMethod: 'Flat rate',
+            billing: { // <-- Hard-coding this for simplicity
+              firstName: 'George',
+              lastName: 'Costanza',
+              address1: `129 West 81st Street, Apartment 5A`,
+              city: `New York`,
+              state: `NY`,
+              postcode: `12345`,
+              email: `george@vandelayindustries.com`,
+            },
+            metaData: [
+              {
+                key: `_stripe_source_id`,
+                value: source.id,
+              },
+            ],
+          },
+        },
+      })
+      // highlight-end
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function handleStripe(): Promise<Source | Error> {
+    ...
+  }
+
+  return (
+    ...
+  )
+}
+
+// highlight-start
+const CHECKOUT = gql`
+  mutation Checkout($input: CheckoutInput!) {
+    checkout(input: $input) {
+      order {
+        databaseId
+      }
+    }
+  }
+`
+// highlight-end
+
+export default CheckoutForm
+```
+
+A few important things to note here. I'm using Apollo as my http client. You can choose whatever fits best for your project. The important point is that we're sending a GraphQL mutation to WooCommerce.
+
+Another important assumption here is that I'm sending along the WooCommerce cart session in my headers as part of the request. That is beyond scope of what we're doing here, but please read the [details of this pull request](https://github.com/wp-graphql/wp-graphql-woocommerce/pull/88) to know what's happening behind the scenes.
+
+The two critical pieces of data relevant to get Stripe working is the `paymentMethod` and `_stripe_source_id` values.
+
+WooGraphQL will use the `paymentMethod` value to dyanimically run the [payment process method](https://github.com/wp-graphql/wp-graphql-woocommerce/blob/develop/includes/data/mutation/class-checkout-mutation.php#L529) for the Stripe Payment Gateway add-on in WordPress.
+
+The `_stripe_source_id` value will [get saved as order meta](https://github.com/wp-graphql/wp-graphql-woocommerce/blob/develop/includes/data/mutation/class-checkout-mutation.php#L603) by WooGraphQL. It will then be [retrieved by WooCommerce Gateway Stripe during the payment process logic](https://github.com/woocommerce/woocommerce-gateway-stripe/blob/trunk/includes/abstracts/abstract-wc-stripe-payment-gateway.php#L719) down the line.
+
+## Step 6: Load the CheckoutForm component in your checkout page
+
+The last step is to load your new form in the checkout page. We'll simply ensure that it's wrapped by the `<Elements/>` provider.
+
+```tsx
+// src/pages/checkout.tsx
+
+import React from 'react'
+import { PageProps } from 'gatsby'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+// highlight-next-line
+import CheckoutForm from '../../components/CheckoutForm'
+
+const stripePromise = loadStripe('pk_test_12345...')
+
+const Checkout: React.FC<PageProps> = () => {
+  return (
+    <>
+      <h1>Checkout</h1>
+      <Elements stripe={stripePromise}>
+        // highlight-next-line
+        <CheckoutForm />
+      </Elements>
+    </>
+  )
+}
+
+export default Checkout
+```
+
+## Step 7: What to do after a successful checkout
+
+For simplicity, we're not doing anything on a successful checkout. However, one option you can do is redirect the user to a thank you page.
+
+In Gatsby, that could look something like the following:
+
+```tsx
+import { navigate } from 'gatsby'
+
+...
+
+const [checkout] = useMutation(CHECKOUT, {
+  // Send the user to a thank you page after sucess
+  onCompleted({ checkout }) {
+    navigate('/checkout/order-received', { state: checkout.order })
+  },
+  // Handle errors
+  onError(error) {
+    console.error(error)
+  }
+})
+
+...
+```
+
+Apollo exposes a `onCompleted` method to us that we can run. In it, our `checkout` mutation is available. We could then use Gatsby's `navigate` helper function to [programatically route](https://www.gatsbyjs.com/docs/reference/built-in-components/gatsby-link/#how-to-use-the-navigate-helper-function) the user to a new page we've created and send along some state (the `order`).
+
+## Conclusion
+
+Our example is really contrived; however, we were able to make the connections between Gatsby, Stripe and WooCommerce. From here, it's a matter of adding in the rest of the UI entities like validation and such.

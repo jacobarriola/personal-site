@@ -11,7 +11,7 @@ import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
 import { useTimeToReadFormatter } from '../hooks'
 
-const shortcodes = { Link } // Provide common components here
+const shortcodes = { Link }
 
 function PostTemplate({ data }) {
   const {
@@ -45,11 +45,15 @@ function PostTemplate({ data }) {
         <header className="max-w-3xl mx-auto mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
           <div className="flex flex-col lg:flex-row text-sm">
-            <div className="mb-2 lg:mb-0">
-              Last updated on{' '}
-              <time dateTime={updatedAt}>{updatedAtFormatted}</time>
-            </div>
-            <span className="mx-1 hidden lg:inline-block">{' • '}</span>
+            <>
+              <div className="mb-2 lg:mb-0">
+                {updatedAt && <span>Last updated on </span>}
+                <time dateTime={updatedAt || createdAt}>
+                  {updatedAtFormatted || createdAt}
+                </time>
+              </div>
+              <span className="mx-1 hidden lg:inline-block">{' • '}</span>
+            </>
             <div>{useTimeToReadFormatter(timeToRead)}</div>
           </div>
         </header>
@@ -65,7 +69,7 @@ function PostTemplate({ data }) {
               📕 Table of contents
             </div>
             <ul>
-              {tableOfContents &&
+              {tableOfContents.items &&
                 tableOfContents.items.map(item => {
                   return (
                     <li key={item.url}>
