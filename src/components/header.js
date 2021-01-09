@@ -29,6 +29,10 @@ function Header() {
               route: `/about`,
               title: `About`,
             },
+            {
+              route: `/talks`,
+              title: `Talks`,
+            },
           ].map(link => (
             <Link
               className="inline-block ml-6"
