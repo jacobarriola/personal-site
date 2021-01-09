@@ -112,4 +112,14 @@ a:not([href^='#']):not([href^='/']):after {
   width: 0.8125em;
 }
 
+.responsive-embed {
+  position: relative;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.responsive-embed iframe {
+  @apply absolute top-0 left-0 w-full h-full;
+}
+
 /* purgecss end ignore */
