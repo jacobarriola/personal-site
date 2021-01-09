@@ -289,7 +289,7 @@ export default Checkout
 
 For simplicity, we're not doing anything on a successful checkout. However, one option you can do is redirect the user to a thank you page.
 
-In Gatsby, that could look something like the following:
+In Gatsby, that could look like the following:
 
 ```tsx
 import { navigate } from 'gatsby'
@@ -297,7 +297,7 @@ import { navigate } from 'gatsby'
 ...
 
 const [checkout] = useMutation(CHECKOUT, {
-  // Send the user to a thank you page after sucess
+  // Send the user to a thank you page after success and send along some state
   onCompleted({ checkout }) {
     navigate('/checkout/order-received', { state: checkout.order })
   },
