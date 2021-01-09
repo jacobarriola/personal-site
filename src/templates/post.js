@@ -30,6 +30,8 @@ function PostTemplate({ data }) {
     },
   } = data
 
+  const readingTime = useTimeToReadFormatter(timeToRead)
+
   return (
     <Layout pageType="post">
       <SEO title={title} description={excerpt} />
@@ -52,10 +54,9 @@ function PostTemplate({ data }) {
               </time>
             </div>
             <span className="mx-1 hidden lg:inline-block">{' • '}</span>
-            <div>{useTimeToReadFormatter(timeToRead)}</div>
+            <div>{readingTime}</div>
           </div>
         </header>
-
         <div
           className="lg:grid items-start lg:-mx-4"
           style={{
@@ -86,10 +87,8 @@ function PostTemplate({ data }) {
           </div>
         </div>
       </main>
-      <aside>
-        <div className="max-w-3xl mx-auto">
-          <AboutMe className="my-10 md:my-20" />
-        </div>
+      <aside className="max-w-3xl mx-auto">
+        <AboutMe className="my-10 md:my-20" />
       </aside>
     </Layout>
   )
