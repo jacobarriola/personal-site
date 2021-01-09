@@ -41,19 +41,17 @@ function PostTemplate({ data }) {
         pageType="blogPost"
         url={`post/${slug}`}
       />
-      <main className="">
+      <main>
         <header className="max-w-3xl mx-auto mb-6 md:mt-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl mb-3">{title}</h1>
           <div className="flex flex-col lg:flex-row text-sm">
-            <>
-              <div className="mb-2 lg:mb-0">
-                {updatedAt && <span>Last updated on </span>}
-                <time dateTime={updatedAt || createdAt}>
-                  {updatedAtFormatted || createdAt}
-                </time>
-              </div>
-              <span className="mx-1 hidden lg:inline-block">{' • '}</span>
-            </>
+            <div className="mb-2 lg:mb-0">
+              {updatedAt && <span>Last updated on </span>}
+              <time dateTime={updatedAt || createdAt}>
+                {updatedAtFormatted || createdAt}
+              </time>
+            </div>
+            <span className="mx-1 hidden lg:inline-block">{' • '}</span>
             <div>{useTimeToReadFormatter(timeToRead)}</div>
           </div>
         </header>

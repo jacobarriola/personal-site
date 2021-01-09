@@ -8,12 +8,12 @@ tags:
   - woocommerce
   - gatsby
 slug: headless-woocommerce-stripe-checkout-graphql
-excerpt: Learn how to create a checkout page for your headless WooCommerce app with Stripe.
+excerpt: Learn how to create a checkout page for your headless WooCommerce app with Gatsby and Stripe.
 ---
 
 ## Introduction
 
-This is an intro on how to set up a checkout page with your headless WooCommerce app with Stripe and GraphQL. It's a basic demo that should provide you some tools to get you started.
+WooCommerce doesn't have the concept of a hosted checkout for your headless, decoupled application. This is an intro on how to set up a checkout page with your headless WooCommerce app with Stripe and GraphQL. It's a basic demo that should provide you some tools to get you started.
 
 I'll be using Gatsby as my headless client, but a lot of the logic should work with other libraries/frameworks too.
 
@@ -23,8 +23,8 @@ On the client side, we'll use the [Stripe React library](https://stripe.com/docs
 
 - Gatsby: 2.29
 - WordPress: 3.6
-- WPGraphQL: 1.05
-- WooGraphQL: 0.7.0
+- [WPGraphQL](https://www.wpgraphql.com/): 1.05
+- [WooGraphQL](https://github.com/wp-graphql/wp-graphql-woocommerce): 0.7.0
 - Apollo: ^3.x
 
 ## Prerequisites
@@ -112,7 +112,7 @@ const CheckoutForm: React.FC = () => {
 export default CheckoutForm
 ```
 
-Lots of stuff happening here, but this is then skeleton of our form. We'll load up two elements from Stripe and use the `CardElement` component to render out the credit card fields.
+Lots of stuff happening here, but this is the skeleton of our form. We'll load up two elements from Stripe and use the `CardElement` component to render out the credit card fields.
 
 ## Step 4: Form submission
 
@@ -314,4 +314,4 @@ Apollo exposes a `onCompleted` method to us that we can run. In it, our `checkou
 
 ## Conclusion
 
-Our example is really contrived; however, we were able to make the connections between Gatsby, Stripe and WooCommerce. From here, it's a matter of adding in the rest of the UI entities like validation and such.
+Our example is really contrived; however, we were able to make the connections between Gatsby, Stripe and WooCommerce. From here, it's a matter of adding in the rest of the UI entities like validation, proper error handling and such.
