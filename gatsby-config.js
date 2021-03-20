@@ -8,12 +8,18 @@ module.exports = {
     twitter: `https://twitter.com/jacobarriola/`,
     siteUrl: `https://jacobarriola.com`,
   },
+  flags: {
+    FAST_DEV: true,
+    PRESERVE_WEBPACK_CACHE: true,
+    PRESERVE_FILE_DOWNLOAD_CACHE: true,
+  },
   plugins: [
     `gatsby-plugin-catch-links`,
     `gatsby-plugin-eslint`,
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-remark`,
     `gatsby-transformer-sharp`,
+    `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-source-filesystem`,
