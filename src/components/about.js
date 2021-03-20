@@ -5,17 +5,18 @@ import PropTypes from 'prop-types'
 function AboutMe({ className, path }) {
   return (
     <div className={`flex items-center ${className}`}>
-      <StaticImage
-        src="../images/avatar-2020.JPG"
-        alt="Jacob Arriola avatar"
-        width={55}
-        height={55}
-        formats={['auto', 'avif', 'webp']}
-        className="rounded-full flex-shrink-0 shadow"
-        loading={path === '/' ? 'eager' : 'lazy'}
-        quality={100}
-        layout="fixed"
-      />
+      <div className="flex-shrink-0">
+        <StaticImage
+          src="../images/avatar-2020.JPG"
+          alt="Jacob Arriola avatar"
+          width={55}
+          height={55}
+          formats={['auto', 'avif', 'webp']}
+          className="rounded-full  shadow"
+          loading={path === '/' ? 'eager' : 'lazy'}
+          quality={100}
+        />
+      </div>
 
       <div className="ml-4">
         {path === '/' ? (
