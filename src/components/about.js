@@ -1,28 +1,22 @@
 import React from 'react'
-import { graphql, useStaticQuery } from 'gatsby'
-import Img from 'gatsby-image'
+import { StaticImage } from 'gatsby-plugin-image'
 import PropTypes from 'prop-types'
 
 function AboutMe({ className, path }) {
-  const { file } = useStaticQuery(graphql`
-    query {
-      file(relativePath: { eq: "avatar-2020.JPG" }) {
-        childImageSharp {
-          fixed(width: 55, height: 55, quality: 100) {
-            ...GatsbyImageSharpFixed_withWebp_tracedSVG
-          }
-        }
-      }
-    }
-  `)
-
   return (
     <div className={`flex items-center ${className}`}>
-      <Img
-        alt="Jacob Arriola"
-        className="rounded-full flex-shrink-0 shadow"
-        fixed={file.childImageSharp.fixed}
-      />
+      <div className="flex-shrink-0">
+        <StaticImage
+          src="../images/avatar-2020.JPG"
+          alt="Jacob Arriola avatar"
+          width={55}
+          height={55}
+          formats={['auto', 'avif', 'webp']}
+          className="rounded-full  shadow"
+          loading={path === '/' ? 'eager' : 'lazy'}
+          quality={100}
+        />
+      </div>
 
       <div className="ml-4">
         {path === '/' ? (
