@@ -47,7 +47,7 @@ module.exports = {
 
     try {
       // eslint-disable-next-line no-console
-      console.log(`🚀 Starting Ghost Inspector E2E tests on ${deployUrl}...`)
+      console.log(`🚀 Starting Ghost Inspector E2E tests on ${deployUrl} ...`)
 
       // Make API request to Ghost Inspector API
       const res = await fetch(
@@ -94,7 +94,8 @@ module.exports = {
 
       return utils.status.show({
         title: `Ghost Inspector E2E tests`,
-        summary: `All tests passed`,
+        summary: `✅ All tests passed`,
+        text: `Visit https://app.ghostinspector.com/suites/${suiteId} for test results`,
       })
     } catch (error) {
       return utils.build.failPlugin(error.message)
