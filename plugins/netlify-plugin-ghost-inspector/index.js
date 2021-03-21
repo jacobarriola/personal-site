@@ -24,12 +24,18 @@ module.exports = {
       return
     }
 
-    await updateGithubStatus({
-      auth: githubApiToken,
-      sha: process.env.COMMIT_REF,
-      state: 'pending',
-      description: 'Pending...',
-    })
+    // Add pending status so PR authors know a Ghost Inspector check is pending
+    try {
+      await updateGithubStatus({
+        auth: githubApiToken,
+        sha: process.env.COMMIT_REF,
+        state: 'pending',
+        description: 'Waiting for Netlify deploy to complete',
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn(error)
+    }
   },
   onSuccess: async ({ utils }) => {
     // Only run this in PR deploys
