@@ -72,7 +72,7 @@ module.exports = {
           auth: githubApiToken,
           sha: process.env.COMMIT_REF,
           state: 'failure',
-          target_url: `'https://app.ghostinspector.com/suites/${suiteId}',`,
+          target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
         })
 
         return utils.build.failBuild(
@@ -89,7 +89,7 @@ module.exports = {
         auth: githubApiToken,
         sha: process.env.COMMIT_REF,
         state: 'success',
-        target_url: `'https://app.ghostinspector.com/suites/${suiteId}',`,
+        target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
       })
 
       return utils.status.show({
