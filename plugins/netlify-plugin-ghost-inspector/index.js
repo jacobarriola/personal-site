@@ -16,6 +16,14 @@ module.exports = {
       return
     }
 
+    // Bail if no GitHub API token is found
+    const githubApiToken = process.env.GITHUB_API_TOKEN
+    if (!githubApiToken) {
+      // eslint-disable-next-line no-console
+      console.log(`Not GitHub token found. Skipping Ghost Inspector tests.`)
+      return
+    }
+
     await updateGithubStatus({
       auth: githubApiToken,
       sha: process.env.COMMIT_REF,
