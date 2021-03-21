@@ -2,6 +2,27 @@ const fetch = require('cross-fetch')
 const { updateGithubStatus } = require('./github')
 
 module.exports = {
+  onPreBuild: async () => {
+    // Only run this in PR deploys
+    const context = process.env.CONTEXT
+    if (!context) {
+      // eslint-disable-next-line no-console
+      console.log(`No context. Skipping Ghost Inspector tests.`)
+      return
+    }
+    if (context !== 'deploy-preview') {
+      // eslint-disable-next-line no-console
+      console.log(`Not in deploy-preview. Skipping Ghost Inspector tests.`)
+      return
+    }
+
+    await updateGithubStatus({
+      auth: githubApiToken,
+      sha: process.env.COMMIT_REF,
+      state: 'pending',
+      description: 'Pending...',
+    })
+  },
   onSuccess: async ({ utils }) => {
     // Only run this in PR deploys
     const context = process.env.CONTEXT
@@ -73,6 +94,7 @@ module.exports = {
           sha: process.env.COMMIT_REF,
           state: 'failure',
           target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
+          description: 'At least one test failed',
         })
 
         return utils.build.failPlugin(
@@ -90,6 +112,7 @@ module.exports = {
         sha: process.env.COMMIT_REF,
         state: 'success',
         target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
+        description: `All tests passed!`,
       })
 
       return utils.status.show({
