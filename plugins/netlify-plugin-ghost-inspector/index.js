@@ -1,4 +1,5 @@
 const fetch = require('cross-fetch')
+const { updateGithubStatus } = require('./github')
 
 module.exports = {
   onSuccess: async ({ utils }) => {
@@ -15,7 +16,7 @@ module.exports = {
       return
     }
 
-    // Check to make sure we have a URL to test
+    // Check to make sure we have a public URL to test against
     const deployUrl = process.env.DEPLOY_PRIME_URL
     if (!deployUrl) {
       // eslint-disable-next-line no-console
@@ -24,8 +25,8 @@ module.exports = {
     }
 
     // Check to ensure we have our API key
-    const auth = process.env.GHOST_INSPECTOR_API_KEY
-    if (!auth) {
+    const ghostInspectorapiKey = process.env.GHOST_INSPECTOR_API_KEY
+    if (!ghostInspectorapiKey) {
       return utils.build.failPlugin(
         `Missing env variable for GHOST_INSPECTOR_API_KEY`
       )
@@ -35,17 +36,22 @@ module.exports = {
     const suiteId = process.env.GHOST_INSPECTOR_SUITE
     if (!suiteId) {
       return utils.build.failPlugin(
-        `Missing env variable for GHOST_INSPECTOR_API_KEY`
+        `Missing env variable for GHOST_INSPECTOR_SUITE`
       )
     }
 
-    // Make API request to Ghost Inspector API
+    const githubApiToken = process.env.GITHUB_API_TOKEN
+    if (!githubApiToken) {
+      return utils.build.failPlugin(`Missing env variable GITHUB_API_TOKEN`)
+    }
+
     try {
       // eslint-disable-next-line no-console
-      console.log(`Starting Ghost Inspector E2E tests on ${deployUrl}...`)
+      console.log(`🚀 Starting Ghost Inspector E2E tests on ${deployUrl}...`)
 
+      // Make API request to Ghost Inspector API
       const res = await fetch(
-        `https://api.ghostinspector.com/v1/suites/${suiteId}/execute/?apiKey=${auth}&startUrl=${deployUrl}`
+        `https://api.ghostinspector.com/v1/suites/${suiteId}/execute/?apiKey=${ghostInspectorapiKey}&startUrl=${deployUrl}`
       )
 
       if (res.status >= 400) {
@@ -61,6 +67,14 @@ module.exports = {
           return { name, passing }
         })
 
+        // Send a failure status to the GitHub commit
+        await updateGithubStatus({
+          auth: githubApiToken,
+          sha: process.env.COMMIT_REF,
+          state: 'failure',
+          target_url: `'https://app.ghostinspector.com/suites/${suiteId}',`,
+        })
+
         return utils.build.failBuild(
           `Ghost Inspector test failed. Failed tests:`,
           testResult
@@ -68,7 +82,15 @@ module.exports = {
       }
 
       // eslint-disable-next-line no-console
-      console.log(`All Ghost Inspector tests passed!`)
+      console.log(`✅ All Ghost Inspector tests passed!`)
+
+      // Send a success status to the Github commit
+      await updateGithubStatus({
+        auth: githubApiToken,
+        sha: process.env.COMMIT_REF,
+        state: 'success',
+        target_url: `'https://app.ghostinspector.com/suites/${suiteId}',`,
+      })
 
       return utils.status.show({
         title: `Ghost Inspector E2E tests`,
