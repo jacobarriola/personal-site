@@ -47,7 +47,7 @@ module.exports = {
 
     try {
       // eslint-disable-next-line no-console
-      console.log(`🚀 Starting Ghost Inspector E2E tests on ${deployUrl} ...`)
+      console.log(`👻 Starting Ghost Inspector E2E tests on ${deployUrl} ...`)
 
       // Make API request to Ghost Inspector API
       const res = await fetch(
@@ -76,8 +76,8 @@ module.exports = {
         })
 
         return utils.build.failPlugin(
-          `🚫 Oh no! At least one Ghost Inspector test failed. Visit https://app.ghostinspector.com/suites/${suiteId} for details. Failed tests:`,
-          testResult
+          `🚫 At least one Ghost Inspector test failed. Visit https://app.ghostinspector.com/suites/${suiteId} for details. Failed tests:
+          ${testResult}`
         )
       }
 
