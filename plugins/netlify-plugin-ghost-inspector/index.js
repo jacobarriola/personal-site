@@ -97,7 +97,7 @@ module.exports = {
         summary: `All tests passed`,
       })
     } catch (error) {
-      return utils.build.failBuild(error.message)
+      return utils.build.failPlugin(error.message)
     }
   },
 }
