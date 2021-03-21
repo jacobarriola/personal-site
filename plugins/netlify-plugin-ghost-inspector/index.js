@@ -75,8 +75,8 @@ module.exports = {
           target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
         })
 
-        return utils.build.failBuild(
-          `Ghost Inspector test failed. Failed tests:`,
+        return utils.build.failPlugin(
+          `🚫 Oh no! At least one Ghost Inspector test failed. Visit https://app.ghostinspector.com/suites/${suiteId} for details. Failed tests:`,
           testResult
         )
       }
