@@ -139,6 +139,7 @@ module.exports = {
           target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
         })
 
+        // Bail
         return utils.build.failPlugin(
           `🚫 At least one Ghost Inspector test failed. Visit https://app.ghostinspector.com/suites/${suiteId} for details. Failed tests:
           ${testResult}`
@@ -173,3 +174,9 @@ module.exports = {
 If all of our tests pass, we should see the status updated in the PR checks along with a link to the test. Great success!
 
 ![Alt GitHub PR summary where all checks passed](https://res.cloudinary.com/jacobarriola/image/upload/v1616519866/Personal%20Site/gh-success_cixzkk.png)
+
+## Takeaways
+
+The GitHub API is crazy powerful, once you get through the sheer amount of different endpoints. The key is understanding what you're trying to do and then finding the endpoint that helps you accomplish that.
+
+The Netlify Build API is as straightforward as a developer would hope for - no SDK, no library, etc. It's just a few handlers that are available in the build lifecycle for you to hook into in order to accomplish something. Good stuff.
