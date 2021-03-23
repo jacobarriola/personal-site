@@ -1,0 +1,175 @@
+---
+title: Netlify Build Plugin + Ghost Inspector
+slug: 'netlify-build-plugin-ghost-inspector'
+createdAt: 2021-03-22
+excerpt: Run Ghost Insector tests during a Netlfiy deploy preview build.
+tags:
+  - netlify
+  - ghost-inspector
+---
+
+The other day I was looking for solutions to run my [Ghost Inspector](https://ghostinspector.com) end-to-end tests on PR builds **before** they were merged and deployed to production in Netlify.
+
+Completed code: https://github.com/jacobarriola/personal-site/tree/master/plugins/netlify-plugin-ghost-inspector
+
+From the [Netlify Build Plugins](https://docs.netlify.com/configure-builds/build-plugins/create-plugins/) docs:
+
+> Run JavaScript code in response to different events happening during the build-deploy lifecycle.
+
+Perfect! This was exactly what I wanted: at a specific point in the Netlify build, run some JS to trigger a Ghost Inspector test and talk to the GitHub API with the results of that test so that my PR can render the status of the tests like any other task.
+
+## API key stuff
+
+To make all of this work, we will need to get and save API keys as Netlify environmental variables.
+
+- GitHub Personal Access Token (this is necessary to interact with the GitHub REST API since we'll be making write requests)
+
+- Ghost Inspector API Key
+
+- Add the keys to the Netlify Dashboard via: Settings > Deploys > Environments
+
+## Ghost Inspector - Start URL
+
+To ensure that our dynamic URLs work as expected, we need to remove any hard coded URLs from our Ghost Inspector tests.
+
+To do so, in your Ghost Inspector test, visit Settings > Test Defaults and set the `Start URL` to your production URL.
+
+![Alt Ghost Inspector settings](https://res.cloudinary.com/jacobarriola/image/upload/v1616519382/Personal%20Site/gi-starturl_qdldxa.png)
+
+Next, ensure that all of your tests do not have a hard-coded `Start URL` and the top. Ghost Inspector will default to the previous url we set or will use a `startUrl` that is passed along during an API request.
+
+![Alt Ghost Inspector single test setting](https://res.cloudinary.com/jacobarriola/image/upload/v1616519562/Personal%20Site/gi-starturl-test_g9bihm.png)
+
+## Netlify: kick things off by setting a pending status in the PR
+
+This isn't mandatory, but I wanted to let PR authors know that Ghost Inspector tests were part of the checks that the PR would complete. Otherwise, the check wouldn't show up until the `onSuccess` method is called.
+
+We'll make this GitHub API call by hooking into the `onPreBuild` handler.
+
+```js
+const { Octokit } = require('@octokit/rest')
+
+module.exports = {
+  onPreBuild: async () => {
+    // Only run this in PR deploys
+    const context = process.env.CONTEXT
+
+    if (!context) {
+      // eslint-disable-next-line no-console
+      console.log(`No context. Skipping Ghost Inspector tests.`)
+      return
+    }
+
+    if (context !== 'deploy-preview') {
+      // eslint-disable-next-line no-console
+      console.log(`Not in deploy-preview. Skipping Ghost Inspector tests.`)
+      return
+    }
+
+    const octokit = new Octokit({ auth: process.env.GITHUB_API_TOKEN })
+
+    await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}', {
+      owner: 'jacobarriola',
+      repo: 'personal-site',
+      sha: process.env.COMMIT_REF, // <-- this comes from Netlify
+      state: 'pending',
+      description: 'Waiting for Netlify build to complete',
+      context: 'Ghost Inspector E2E Tests',
+    })
+  },
+}
+```
+
+Once that code is in, our PR check will now reflect our pending status when a Netlify build starts:
+
+![Alt GitHub checks on a pull request showing pending status](https://res.cloudinary.com/jacobarriola/image/upload/v1616517970/Personal%20Site/gh-pending-ghost-inspector_ziaybs.png)
+
+## Run Ghost Inspector after the build is complete
+
+We need to run Ghost Inspector once our preview URL is publicly available. The best place to do this is the `onSuccess` handler.
+
+> Note: I tried to do this on the `onPostBuild` handler but couldn't because the preview URL wasn't publicly available. Therefore, Ghost Inspector could not run its tests.
+
+```js
+const fetch = require('cross-fetch')
+const { Octokit } = require('@octokit/rest')
+
+module.exports = {
+  ...
+  onSuccess: async ({ utils }) => {
+    // Note: for simplicity, I'm skipping a lot of checks. See the final
+    // version for a less contrived example.
+
+    const context = process.env.CONTEXT
+    const deployUrl = process.env.DEPLOY_PRIME_URL
+    const ghostInspectorApiKey = process.env.GHOST_INSPECTOR_API_KEY
+    const suiteId = process.env.GHOST_INSPECTOR_SUITE
+    const githubApiToken = process.env.GITHUB_API_TOKEN
+    const octokit = new Octokit({ auth: process.env.GITHUB_API_TOKEN })
+
+    try {
+      console.log(`👻 Starting Ghost Inspector E2E tests on ${deployUrl} ...`)
+
+      // Make API request to the Ghost Inspector API
+      const res = await fetch(
+        `https://api.ghostinspector.com/v1/suites/${suiteId}/execute/?apiKey=${ghostInspectorApiKey}&startUrl=${deployUrl}`
+      )
+
+      if (res.status >= 400) {
+        throw new Error(`Bad response from Ghost Inspector server.`)
+      }
+
+      const result = await res.json()
+
+      const didTestsPass = result.data.every(test => test.passing === true)
+
+      if (false === didTestsPass) {
+        const testResult = result.data.map(({ name, passing }) => {
+          return { name, passing }
+        })
+
+        // Send a failure status to the GitHub commit
+        await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}', {
+          owner: 'jacobarriola',
+          repo: 'personal-site',
+          sha: process.env.COMMIT_REF, // <-- this comes from Netlify
+          state: 'failure',
+          description: 'At least one test failed',
+          context: 'Ghost Inspector E2E Tests',
+          target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
+        })
+
+        return utils.build.failPlugin(
+          `🚫 At least one Ghost Inspector test failed. Visit https://app.ghostinspector.com/suites/${suiteId} for details. Failed tests:
+          ${testResult}`
+        )
+      }
+
+      console.log(`✅ All Ghost Inspector tests passed!`)
+
+      // Send a success status to the Github commit
+      await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}', {
+        owner: 'jacobarriola',
+        repo: 'personal-site',
+        sha: process.env.COMMIT_REF, // <-- this comes from Netlify
+        state: 'success',
+        description: 'All tests passed!',
+        context: 'Ghost Inspector E2E Tests',
+        target_url: `https://app.ghostinspector.com/suites/${suiteId}`,
+      })
+
+      return utils.status.show({
+        title: `Ghost Inspector E2E tests`,
+        summary: `✅ All tests passed`,
+        text: `Visit https://app.ghostinspector.com/suites/${suiteId} for test results`,
+      })
+    } catch (error) {
+      return utils.build.failPlugin(error.message)
+    }
+  },
+}
+```
+
+If all of our tests pass, we should see the status updated in the PR checks along with a link to the test. Great success!
+
+![Alt GitHub PR summary where all checks passed](https://res.cloudinary.com/jacobarriola/image/upload/v1616519866/Personal%20Site/gh-success_cixzkk.png)
