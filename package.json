@@ -62,7 +62,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-react": "^7.22.0",
     "gatsby-plugin-eslint": "^3.0.0",
-    "postcss": "^8.2.8",
+    "postcss": "^8.2.10",
     "prettier": "^2.2.1",
     "tailwindcss": "^1.9.6"
   },
