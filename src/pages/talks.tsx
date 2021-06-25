@@ -16,6 +16,20 @@ const Talks: React.FC<PageProps> = () => {
         <p>A collection of talks and appearances over the years.</p>
         <ul className="grid grid-cols-1 gap-10 list-none">
           <li>
+            <h2>Gatsby Conf 2021: WooCommerce + Gatsby E-Commerce</h2>
+            <div className="responsive-embed">
+              <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/Vb6ipdSHSYU?start=317"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </li>
+          <li>
             <h2>Gatsby WooCommerce demo: OC WordPress Meetup</h2>
             <div className="responsive-embed">
               <iframe
