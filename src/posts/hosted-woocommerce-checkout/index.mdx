@@ -1,0 +1,185 @@
+---
+title: Hosted WooCommerce Checkout for a Headless Application
+slug: 'hosted-woocommerce-checkout-headless-application'
+createdAt: 2021-06-23
+excerpt: Offload checkout to WooCommerce for your headless ecommerce application.
+tags:
+  - jamstack
+  - woocommerce
+  - react
+---
+
+In this post, we'll walk through how to let WooCommerce host your checkout in your headless ecommerce application. The thought behind this flow was to offload checkout to the native WooCommerce checkout page (served by WordPress) and not try and rebuild all of that logic. Depending on how complex your application is, there could be a lot involved such as multiple payment gateways, 3rd party plugins and form validation.
+
+So rather than try to re-invent the wheel with checkout, let's leverage all of the work that WooCommerce has done to make checkout a seamless experience.
+
+## What I built
+
+The idea is to send our users from our decoupled application (Gatsby in my case) to the WordPress `/checkout` page and load the WooCommerce session (which contains all the the user's cart information).
+
+To do this, we need some way to tell WordPress that the request is coming from our Gatsby application and that it needs to load up the correct session. Otherwise, our users will land on the checkout page ready to pay, but will see an empty cart.
+
+The method I ended up with was to simply add the session id as a query param, ie `https://[MY_WORDPRESS_DOMAIN]/checkout/?session_id=12345`. WooCommerce will look for that session in the request and will load it up. Magic!
+
+## How to get the session
+
+WooGraphQL stores the cart session ID in a JSON Web Token (JWT). It sends the session as a response header on the `addToCart` mutation. Check out this PR for implementation details: https://github.com/wp-graphql/wp-graphql-woocommerce/pull/88
+
+To get the session ID from the JWT, we'll need to decode the JWT and grab the `customer_id` from the decoded `data` object. That could look something like the following:
+
+```tsx
+import jwtDecode from 'jwt-decode'
+import { useState }, React from 'react'
+import { getSession } from './my/cool/session/storage/mechanism'
+
+
+const CheckoutButton<React.FC> = () => {
+  const [session] = useState(() => {
+    try {
+      // Get the session from whatever mechanism you're storing it in: localstorage, context, state, etc
+      const jwtSession = getSession()
+
+      // jtw-decode is an open-source package.
+      const decoded = jwtDecode<{ data: { customer_id: string } }>(jwtSession)
+
+      return decoded.data.customer_id
+    } catch (error) {
+      console.error(error.message)
+
+      return null
+    }
+  })
+
+  return <a href={`https://my-wordpress-url.com/?session_id=${session}`}>Proceed to checkout</a>
+}
+```
+
+## Load the session in WooCommerce
+
+To load the session in WooCommerce, we'll hook into the `woocommerce_load_cart_from_session` action and look for the `session_id` query parameter in the request. If it's found, we'll explicilty get the session using the `WC_Session_Handler` class and set it via the `WC` class.
+
+```php
+namespace App;
+
+add_action( 'woocommerce_load_cart_from_session', function () {
+
+	// Bail if there isn't any data
+	if ( ! isset( $_GET['session_id'] ) ) {
+		return;
+	}
+
+	$session_id = sanitize_text_field( $_GET['session_id'] );
+
+	try {
+
+		$handler      = new \WC_Session_Handler();
+		$session_data = $handler->get_session( $session_id );
+
+    // We were passed a session ID, yet not session was found. Let's log this and bail.
+		if ( empty( $session_data ) ) {
+			throw new \Exception( 'Could not locate WooCommerce session on checkout' );
+		}
+
+    // Go get the session instance (WC_Session) from the Main WC Class
+		$session = WC()->session;
+
+    // Set the session variable
+		foreach ( $session_data as $key => $value ) {
+			$session->set( $key, unserialize( $value ) );
+		}
+
+	} catch ( \Exception $exception ) {
+		ErrorHandling::capture( $exception );
+	}
+
+} );
+```
+
+Now, when the checkout page loads, the correct session is set and the user's cart renders the correct information!
+
+## Delete session after successful checkout
+
+In typical WooCommerce-land, WC gracefully empties the cart after a successful order. I ran into situations where the session was not always getting deleted. To gurantee that our session is deleted, we need to handle this ourselves.
+
+Here's how I did it:
+
+1. Create a hidden input field in the checkout form using the `woocommerce_checkout_after_customer_details` hook with the session id as a value:
+
+```php
+add_action( 'woocommerce_checkout_after_customer_details', function () {
+	// Bail if there isn't any data
+	if ( ! isset( $_GET['session_id'] ) ) {
+		return;
+	} ?>
+
+	<input
+		type="hidden"
+		name="headless-session"
+		value="<?= esc_attr( $_GET['session_id'] ) ?>"
+	/>
+	<?php
+} );
+```
+
+2. When the payment is successful, delete the session via the `woocommerce_payment_complete` hook:
+
+```php
+add_action( 'woocommerce_payment_complete', function () {
+	// Bail if there isn't any data
+	if ( ! isset( $_POST['headless-session'] ) ) {
+		return;
+	}
+
+	// Delete the headless session we set on POST during the checkout
+	WC()->session->delete_session( sanitize_text_field( $_POST['headless-session'] ) );
+} );
+```
+
+## Persisted cart
+
+WooCommerce has a concept of a persisted cart, in that it saves a cart session for logged in users in the `_usermeta` table. Therefore, even if we delete our session as stated above, an authenticated user will still see her previous cart the next time she visits our app. To circumvent, simply disable the option via a filter:
+
+```php
+add_filter( 'woocommerce_persistent_cart_enabled', '__return_false' );
+```
+
+## PayPal Standard
+
+If you're using the PayPal Standard payment gateway, the previous option will not work. Why? Because PayPal takes over the `$_POST` array and removes our `headless-session` value we set during checkout. So when we go to look for it after payment is complete, it will not be there.
+
+To circumvent, we need to:
+
+1. Add the session id as order meta using the `woocommerce_checkout_update_order_meta` hook. The action is fired _after_ the order is created, so it's not render-blocking.
+
+```php
+add_action( 'woocommerce_checkout_update_order_meta', function ( $order_id ) {
+	// Bail if there isn't any data
+	if ( ! isset( $_POST['headless-session'] ) ) {
+		return;
+	}
+
+	update_post_meta( $order_id, 'headless-session', sanitize_text_field( $_POST['headless-session'] ) );
+} );
+```
+
+2. On the order confirmation page via PayPal Standard gateway, delete headless session. Note that this is a dynamic action: `woocommerce_thankyou_ . get_payment_method()`.
+
+```php
+add_action( 'woocommerce_thankyou_paypal', function ( $order_id ) {
+	$headless_session = get_post_meta( $order_id, 'headless-session', true );
+
+	if ( empty( $headless_session ) ) {
+		return;
+	}
+
+	// Delete the headless session we set on POST during the checkout
+	WC()->session->delete_session( sanitize_text_field( $headless_session ) );
+
+  // Tidy things up so our db doesn't get bloated
+  delete_post_meta( $order_id, 'headless-session' );
+} );
+```
+
+## Conclusion
+
+All in all, there's a bit of effort to get this rolling. However, I think it's much less effort than having to build out the checkout page from scratch, especially if you're having to support multiple gateways, plugins and deal with all of the form validation.
