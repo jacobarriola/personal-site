@@ -39,7 +39,7 @@ const CheckoutButton<React.FC> = () => {
       // Get the session from whatever mechanism you're storing it in: localstorage, context, state, etc
       const jwtSession = getSession()
 
-      // jtw-decode is an open-source package.
+      // jtw-decode is an open-source package
       const decoded = jwtDecode<{ data: { customer_id: string } }>(jwtSession)
 
       return decoded.data.customer_id
@@ -75,7 +75,7 @@ add_action( 'woocommerce_load_cart_from_session', function () {
 		$handler      = new \WC_Session_Handler();
 		$session_data = $handler->get_session( $session_id );
 
-    // We were passed a session ID, yet not session was found. Let's log this and bail.
+    // We were passed a session ID, yet no session was found. Let's log this and bail.
 		if ( empty( $session_data ) ) {
 			throw new \Exception( 'Could not locate WooCommerce session on checkout' );
 		}
