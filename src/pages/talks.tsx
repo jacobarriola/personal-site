@@ -16,6 +16,30 @@ const Talks: React.FC<PageProps> = () => {
         <p>A collection of talks and appearances over the years.</p>
         <ul className="grid grid-cols-1 gap-10 list-none">
           <li>
+            <h2>Do The Woo Podcast: Headless WooCommerce</h2>
+            <img
+              src="https://res.cloudinary.com/jacobarriola/image/upload/f_auto/Personal%20Site/Do-the-Woo-Podcast-with-Jacob-Arriola-Episode-135_xtwjrj.jpg"
+              alt="Do The Woo Podcast with Jacob Arriola"
+              loading="lazy"
+              width={1600}
+              height={900}
+            />
+            <p className="text-xs italic">
+              Image credit: <a href="https://dothewoo.io">Do The Woo</a>.
+            </p>
+
+            <iframe
+              src="https://open.spotify.com/embed/episode/1EnUxEtO0qFQz8jciCYXdL?theme=0"
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allowTransparency={true}
+              allow="encrypted-media"
+              title="Spotify media player"
+              loading="lazy"
+            />
+          </li>
+          <li>
             <h2>Gatsby Conf 2021: WooCommerce + Gatsby E-Commerce</h2>
             <div className="responsive-embed">
               <iframe
@@ -26,6 +50,7 @@ const Talks: React.FC<PageProps> = () => {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                loading="lazy"
               />
             </div>
           </li>
