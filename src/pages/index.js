@@ -6,7 +6,7 @@ import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
-import { useTimeToReadFormatter } from '../hooks'
+import { useTimeToReadFormatter } from '../hooks/index.tsx'
 
 function IndexPage({ data }) {
   return (

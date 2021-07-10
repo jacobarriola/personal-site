@@ -5,7 +5,8 @@ import SEO from '../components/seo'
 import StructuredData from '../components/structured-data'
 import { useTimeToReadFormatter } from '../hooks'
 
-const Tag: React.FC<PageProps<TagProps>> = ({ pageContext, data }) => {
+const Tag: React.FC<TagTemplateProps> = ({ data, ...props }) => {
+  const { pageContext } = props
   return (
     <Layout>
       <SEO title={`Tag: ${pageContext.slug}`} />
@@ -36,25 +37,28 @@ const Tag: React.FC<PageProps<TagProps>> = ({ pageContext, data }) => {
   )
 }
 
-type TagProps = {
-  allMdx: {
-    nodes: Array<Post>
-  }
+type TagTemplateProps = PageProps<TagProps, TagQueryProps>
+
+type TagQueryProps = {
+  slug: string
 }
 
-type Post = {
-  id: string
-  timeToRead: number
-  slug: string
-  frontmatter: {
-    title: string
-    excerpt: string
-    createdAt: string
+type TagProps = {
+  allMdx: {
+    nodes: {
+      frontmatter: {
+        title: string
+        excerpt: string
+        createdAt: string
+      }
+      id: string
+      slug: string
+    }[]
   }
 }
 
 export const query = graphql`
-  query TAG($slug: String!) {
+  query TAG_TEMPLATE($slug: String!) {
     allMdx(
       sort: { fields: frontmatter___createdAt, order: DESC }
       filter: { frontmatter: { tags: { eq: $slug } } }
