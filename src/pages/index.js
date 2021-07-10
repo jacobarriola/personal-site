@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link, graphql } from 'gatsby'
+import { graphql } from 'gatsby'
 
 import Layout from '../components/layout'
 import SEO from '../components/seo'
 import AboutMe from '../components/about'
 import StructuredData from '../components/structured-data'
-import { useTimeToReadFormatter } from '../hooks/index.tsx'
+import BlogEntry from '../components/BlogEntry/BlogEntry'
 
 function IndexPage({ data }) {
   return (
@@ -27,24 +27,11 @@ function IndexPage({ data }) {
       </aside>
       <main>
         <ul>
-          {data.allMdx &&
-            data.allMdx.nodes.map(node => (
-              <li className="mb-10" key={node.id}>
-                <h2 className="text-2xl mb-2">
-                  <Link to={`/post/${node.frontmatter.slug}`}>
-                    {node.frontmatter.title}
-                  </Link>
-                </h2>
-                <div className="mb-2 flex text-sm">
-                  <time dateTime={node.frontmatter.createdAt}>
-                    {node.frontmatter.createdAtFormatted}
-                  </time>
-                  <span className="mx-1">{' • '}</span>
-                  <div>{useTimeToReadFormatter(node.timeToRead)}</div>
-                </div>
-                <p className="font-serif">{node.frontmatter.excerpt}</p>
-              </li>
-            ))}
+          {data.allMdx?.nodes?.map(node => (
+            <li className="mb-10" key={node.id}>
+              <BlogEntry {...node} />
+            </li>
+          ))}
         </ul>
       </main>
     </Layout>
@@ -59,15 +46,7 @@ export const query = graphql`
   query HOME_LATEST_POSTS {
     allMdx(sort: { fields: frontmatter___createdAt, order: DESC }) {
       nodes {
-        id
-        timeToRead
-        frontmatter {
-          excerpt
-          title
-          slug
-          createdAtFormatted: createdAt(formatString: "MMMM Do YYYY")
-          createdAt(formatString: "YYYY-MM-DD")
-        }
+        ...blogEntryFields
       }
     }
   }
