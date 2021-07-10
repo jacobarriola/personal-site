@@ -19,13 +19,8 @@ function PageAbout() {
         <p>
           I&apos;m a full stack developer at{' '}
           <a href="https://zeek.com">Zeek Interactive</a>, but lean more to the
-          UI side of things 💅🏽.
-        </p>
-        <p>
-          I focus on making 🚀 fast and ♿️ accessible web applications. These
-          days, I spend most of my time writing JavaScript and some PHP to
-          construct web sites and web applications. I&apos;m really curious
-          about GraphQL and decoupled applications with JavaScript these days.
+          UI side of things 💅🏽. I focus on making 🚀 fast and ♿️ accessible web
+          applications with React and TypeScript.
         </p>
         <p>
           Outside of work, I&apos;m really passionate about cycling, backyard
