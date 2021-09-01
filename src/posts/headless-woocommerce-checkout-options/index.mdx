@@ -1,0 +1,82 @@
+---
+title: Headless WooCommerce Checkout Options
+createdAt: 2021-09-01
+slug: headless-woocommerce-checkout-options
+excerpt: The two checkout options when building a headless WooCommerce application.
+tags:
+  - graphql
+  - woographql
+---
+
+## Introduction
+
+If you're going to build a headless WooCommerce application, you generally have two options when it comes to checkout:
+
+A) Build it yourself
+
+--OR--
+
+B) Offload to WordPress
+
+> ✋🏼 Yep, I know there are some hosted checkout plugins for WordPress, but for the sake of simplicity, this post isn't about reviewing those plugins.
+
+## Option A: build the checkout yourself
+
+This is a totally feasabile solution. The WooGraphQL has a `checkout` mutation that will create the order and handle the payment gateway for you.
+
+💡 Example: See my post about a detailed implementation: <Link to="/post/headless-woocommerce-stripe-checkout-graphql">build a checkout page for your headless WooCommerce app with React</Link>.
+
+### The pros of building your own checkout:
+
+1. You have complete control of the UI (👈🏽 this may be the deal breaker)
+2. It's fast
+3. It's a seemless experience
+
+### The cons of building your own checkout:
+
+1. You have to build the entire UI - yes, you get the blank canvas, but that means you need to build it
+2. You have to deal with form validation
+3. You have to handle errors - checkout errors, gateway errors
+4. You have to build another route for the confirmation page
+5. You have to learn about the payment gateway SDK
+6. There may be existing functionality that you have to integrate such as adding users to a newsletter upon checkout
+7. WTF is PCI compliance and do you need to support it? I don't know it, and would rather spend time on solving business problems than dealing with learning and supporting this.
+8. What if you want to start supporting Google and Apple Pay?
+9. Has your implementation gone through the wringer? Is there something in production that you can trust or is this the first implementation? If so, checkout is a critical piece of the business, and you probably don't want to mess it up 😀
+10. Authentication - how can you ensure that authenticated user's orders get associated with their account?
+
+Based on this list, it _seems_ that the cons far outweigh the pros; however, if a very specific UI is required and cannot be built in WordPress, building your own may be an optimal option.
+
+## Option B: offload to WordPress
+
+The idea behind this is to send your users from the cart page to the WordPress checkout page, which lives in a different domain.
+
+💡 Read my detailed implementation about <Link to="/post/hosted-woocommerce-checkout">offloading checkout to WordPress</Link>.
+
+### The pros of offloading checkout to WordPress:
+
+1. It already works - form validation, error handling and payment gateways are already in place
+2. No need to deal with custom payment gateway integration
+3. 3rd party plugins that hook into checkout will continue to work
+4. The confirmation page is already built
+5. Authentication will work (kind of)
+
+### The cons of offloading checkout to WordPress:
+
+1. You have to properly handoff the cart session from your decoupled app to WordPress, otherwise the cart will be empty when the checkout page loads
+2. Unless you're using cookie authentictation, your users will have to log in again
+3. The page may be slow to load, especially on mobile, since its WordPress
+4. You need to ensure that branding properly matches the headless app so that users aren't confused
+
+## Conclusion
+
+These days, I lean more towards offloading the checkout to WordPress. That way I can stay focused on solving unique business challenges.
+
+## Resources
+
+- <Link to="/post/hosted-woocommerce-checkout">
+    Offload WooCommerce checkout to WordPress
+  </Link>
+- <Link to="/post/headless-woocommerce-stripe-checkout-graphql">
+    Build a WooCommerce checkout page with React
+  </Link>
