@@ -4,7 +4,7 @@ import Layout from '../components/layout'
 import SEO from '../components/seo'
 import StructuredData from '../components/structured-data'
 
-function PageAbout() {
+const PageAbout: React.FC = () => {
   return (
     <Layout>
       <SEO title="👋🏽 About" />
@@ -51,7 +51,7 @@ function PageAbout() {
           width="100%"
           height="152"
           frameBorder="0"
-          allowtransparency={true}
+          allowTransparency={true}
           allow="encrypted-media"
           title="Spotify media player"
           loading="lazy"
