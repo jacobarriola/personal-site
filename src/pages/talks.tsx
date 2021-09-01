@@ -23,7 +23,7 @@ const Talks: React.FC<PageProps> = () => {
               Link to WPEngine:{' '}
               <a
                 href="https://developers.wpengine.com/podcast/9109673"
-                aria-label="episode on decode's site"
+                aria-label="episode on decode's site`"
               >
                 https://developers.wpengine.com/podcast/9109673
               </a>
