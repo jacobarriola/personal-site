@@ -16,6 +16,30 @@ const Talks: React.FC<PageProps> = () => {
         <p>A collection of talks and appearances over the years.</p>
         <ul className="grid grid-cols-1 gap-10 list-none">
           <li>
+            <h2>
+              DE{'{'}CODE{'}'} Podcast: Headless WooCommerce
+            </h2>
+            <p>
+              Link to WPEngine:{' '}
+              <a
+                href="https://developers.wpengine.com/podcast/9109673"
+                aria-label="episode on decode's site"
+              >
+                https://developers.wpengine.com/podcast/9109673
+              </a>
+            </p>
+            <iframe
+              src="https://open.spotify.com/embed/episode/03Coft6LSoEI8MDZZchMIQ?theme=0"
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allowTransparency={true}
+              allow="encrypted-media"
+              title="Spotify media player"
+              loading="lazy"
+            />
+          </li>
+          <li>
             <h2>Do The Woo Podcast: Headless WooCommerce</h2>
             <img
               src="https://res.cloudinary.com/jacobarriola/image/upload/f_auto/Personal%20Site/Do-the-Woo-Podcast-with-Jacob-Arriola-Episode-135_xtwjrj.jpg"
