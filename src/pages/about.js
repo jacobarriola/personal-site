@@ -37,13 +37,25 @@ function PageAbout() {
           .
         </p>
         <h2>More Stuff About Me</h2>
-        <ul className="list-none">
+        <ul className="list-none mb-10">
           <li className="mb-2">
             🚴🏽‍♂️ JAMStack projects - I&apos;m working on a lot of these projects
             lately, especially with WordPress as a data source
           </li>
           <li>📕 Currently learning GraphQL, TypeScript and Laravel</li>
         </ul>
+
+        <h2>Latest podcast appearance</h2>
+        <iframe
+          src="https://open.spotify.com/embed/episode/03Coft6LSoEI8MDZZchMIQ?theme=0"
+          width="100%"
+          height="152"
+          frameBorder="0"
+          allowtransparency={true}
+          allow="encrypted-media"
+          title="Spotify media player"
+          loading="lazy"
+        />
       </main>
     </Layout>
   )
