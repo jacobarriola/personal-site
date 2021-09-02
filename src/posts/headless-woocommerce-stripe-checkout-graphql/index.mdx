@@ -72,7 +72,7 @@ As an aside, you could always wrap your entire app in this provider. I'd lean to
 
 This is the setup that Stripe needs to load all of its dependencies. On the next step, we'll create our checkout form to build out the necessary credit card fields that a user will fill out.
 
-## Step 3: Create the checkout form
+## Step 2: Create the checkout form
 
 Let's create a basic checkout form so that we can enter our credit card information. For simplicity, we'll hard-code the other information about the buyer such as the name and address.
 
@@ -115,7 +115,7 @@ export default CheckoutForm
 
 Lots of stuff happening here, but this is the skeleton of our form. We'll load up two elements from Stripe and use the `CardElement` component to render out the credit card fields.
 
-## Step 4: Form submission
+## Step 3: Form submission
 
 When the form is submitted, we will be utilizing the Stripe API to generate a `Source` object. Essentially, the `Source` object contains all of the payment information that a user has submitted. It contains an ID, which will serve as a reference we'll be sending to WooCommerce. WooCommerce will then use that ID during the order and payment process logic.
 
@@ -166,7 +166,7 @@ async function handleStripe(): Promise<Source | Error> {
 }
 ```
 
-## Step 5: Send GraphQL mutation to WooCommerce
+## Step 4: Send GraphQL mutation to WooCommerce
 
 Once we've handled the Stripe side of things, the last step to complete the checkout is to send a `checkout` mutation to WooCommerce. In the mutation arguments, we'll pass in our newly-created source ID and let WooCommerce know that we intend to use Stripe.
 
@@ -255,7 +255,7 @@ WooGraphQL will use the `paymentMethod` value to dyanimically run the [payment p
 
 The `_stripe_source_id` value will [get saved as order meta](https://github.com/wp-graphql/wp-graphql-woocommerce/blob/develop/includes/data/mutation/class-checkout-mutation.php#L603) by WooGraphQL. It will then be [retrieved by WooCommerce Gateway Stripe during the payment process logic](https://github.com/woocommerce/woocommerce-gateway-stripe/blob/trunk/includes/abstracts/abstract-wc-stripe-payment-gateway.php#L719) down the line.
 
-## Step 6: Load the CheckoutForm component in your checkout page
+## Step 5: Load the CheckoutForm component in your checkout page
 
 The last step is to load your new form in the checkout page. We'll simply ensure that it's wrapped by the `<Elements/>` provider.
 
@@ -286,7 +286,7 @@ const Checkout: React.FC<PageProps> = () => {
 export default Checkout
 ```
 
-## Step 7: What to do after a successful checkout
+## Step 6: What to do after a successful checkout
 
 For simplicity, we're not doing anything on a successful checkout. However, one option you can do is redirect the user to a thank you page.
 
