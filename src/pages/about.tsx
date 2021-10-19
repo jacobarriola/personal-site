@@ -17,8 +17,7 @@ const PageAbout: React.FC = () => {
           👋🏽 Hi, I&apos;m Jacob
         </h1>
         <p>
-          I&apos;m a full stack developer at{' '}
-          <a href="https://zeek.com">Zeek Interactive</a>, but lean more to the
+          I&apos;m a full stack developer, but lean more to the
           UI side of things 💅🏽. I focus on making 🚀 fast and ♿️ accessible web
           applications with React and TypeScript.
         </p>
