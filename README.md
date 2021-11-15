@@ -1,1 +1,1 @@
-# Jacob Arriola personal site.
+# Jacob Arriola personal site
