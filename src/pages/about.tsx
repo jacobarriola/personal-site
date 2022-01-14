@@ -41,7 +41,7 @@ const PageAbout: React.FC = () => {
             🚴🏽‍♂️ JAMStack projects - I&apos;m working on a lot of these projects
             lately, especially with WordPress as a data source
           </li>
-          <li>📕 Currently learning GraphQL, TypeScript and Laravel</li>
+          <li>📕 Currently learning Python</li>
         </ul>
 
         <h2>Latest podcast appearance</h2>
