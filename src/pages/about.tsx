@@ -22,6 +22,9 @@ const PageAbout: React.FC = () => {
           applications with React and TypeScript.
         </p>
         <p>
+          I currently work at Tomo, a real estate listing site, which offers a list of <a href="https://tomo.com">homes for sale</a> all across the US. We also have built a revolutionary mortgage app for you to <a href="https://tomo.com/mortgage">apply for a mortgage</a> that takes the pain away from the homebuying experience.
+        </p>
+        <p>
           Outside of work, I&apos;m really passionate about cycling, backyard
           farming, yoga, and golf.
         </p>
