@@ -22,10 +22,11 @@ const PageAbout: React.FC = () => {
           applications with React and TypeScript.
         </p>
         <p>
-          I currently work at Tomo, which contains <a href="https://tomo.com">homes 
-          for sale</a> on our listings portal. We also have built a revolutionary 
-          way for you to <a href="https://tomo.com/mortgage">apply for a mortgage</a> 
-          that takes the pain away from the homebuying experience.
+          I currently work at Tomo, which offers a list of 
+          <a href="https://tomo.com">homes for sale</a>. We also have 
+          built a revolutionary way for you to 
+          <a href="https://tomo.com/mortgage">apply for a mortgage</a> that 
+          takes the pain away from the homebuying experience.
         </p>
         <p>
           Outside of work, I&apos;m really passionate about cycling, backyard
